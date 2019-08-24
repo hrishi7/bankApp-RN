@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View,StatusBar,TouchableOpacity } from 'react-native';
 import {Container,Content,H2,Header,Button, Text,H3, Form, Item,Icon, Input, Label,H4,Fab} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,73 +9,102 @@ export default class AdminLogin extends Component {
     render() {
       return (
         <Container>
-        <Grid>
-          <Row>
-            <Col style={{ marginTop:25}}>
-              <H3 style={styles.topText}>Login With</H3>
-                <Fab
-                  style={{ backgroundColor: '#9f3799'}}
-                  position="topLeft"
+        <StatusBar hidden />
+        <View style={{flexDirection:'column'}}>
+          <Text style={styles.appTitle}>Admin Login </Text>
+          <Form style={styles.formView}>
+                <Item floatingLabel>
+                  <Label>Username</Label>
+                  <Input />
+                </Item>
+                <Item floatingLabel>
+                  <Label>Password</Label>
+                  <Input />
+                </Item>
+          </Form>
+          <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', paddingTop:15, marginBottom:35}}>
+            <TouchableOpacity
+                  onPress={()=> this.props.navigation.navigate('AdminDashboard')}
                 >
-                <Ionicons name='logo-facebook' size={30}/>
-                </Fab>
-                <Fab
-                  style={{ backgroundColor: '#9f3799'}}
-                  position="topRight"
-                >
-                <Ionicons name='logo-google' size={30}/>
-                </Fab>
+                  <Text style={styles.loginButton}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                  onPress={()=> alert('clear')}
+            >
+                  <Text style={styles.clearButton}>Clear</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center'}}>
+            <Text style={{fontFamily:'Roboto', fontSize:15}}>Not a User Yet?</Text>
+            <TouchableOpacity
+            onPress={()=> this.props.navigation.navigate('AdminRegister')}
+            >
+              <Text style={styles.signUpButton}>SignUp</Text>
+            </TouchableOpacity>
 
-                <H3 style={styles.topText}>Be traditional!</H3>
-                <Form style={{ margin:10}}>
-                  <Item floatingLabel>
-                    <Label>Username</Label>
-                    <Input />
-                  </Item>
-                  <Item floatingLabel last>
-                    <Label>Password</Label>
-                    <Input />
-                  </Item>
-                </Form>
-                <Button block
-                style={{height:45, margin:10}}
-                onPress={()=> this.props.navigation.navigate('AdminDashboard')}
-                >
-                <Text>Login</Text>
-                </Button>
-                <Button block success
-                style={{height:45, margin:10}}
-                onPress={()=> alert('clear')}
-                >
-                <Text>Clear</Text>
-              </Button>
-              <H3 style={styles.topText}>Not a Admin ?</H3>
-              <Button dark
-              onPress = {()=> this.props.navigation.navigate('AdminRegister')}
-              style={{alignSelf:'center', marginTop:15}}
-              ><Text> SignUp </Text></Button>
-            </Col>
-          </Row>
-        </Grid>
-      </Container>
+            </View>
+        </View>
+    </Container>
       )
     }
   }
 
+
   const styles = StyleSheet.create({
-    topText:{
-      marginTop:15,
-      // flex:1,
-      // alignItems:'center',
+    // Container:{
+    //   flexGrow:1,
+    //   backgroundColor:'#FAFAFA',
+    //   justifyContent:'center',
+    //   alignItems:'center'
+    // },
+    appTitle:{
+      paddingTop:40,
+      fontFamily:'Roboto',
+      fontWeight:'bold',
+      fontSize:30,
       alignSelf:'center'
     },
-    buttons:{
-      backgroundColor: '#635DB7',
-      height: '100%',
-      flex:1,
-      alignItems:'center',
-      justifyContent:'center',
-      color:'#fff'
+    smallTitle:{
+      fontFamily:'Roboto',
+      fontWeight:'200',
+      fontSize:25,
+      alignSelf:'center'
+    },
+    formView:{
+      marginRight:20,
+      marginLeft:20,
+      paddingBottom:15,
+    },
+    agentButton:{
+      marginRight:10,
+      backgroundColor:'#FF9800',height:50, textAlign:'center', textAlignVertical:'center',
+      width:50,
+      borderRadius:75,
+    },
+    adminButton:{
+      marginLeft:10,
+      backgroundColor:'#FF9800',height:50, textAlign:'center', textAlignVertical:'center',
+      width:50,
+      borderRadius:75,
+    },
+    loginButton:{
+      marginRight:10,
+      backgroundColor:'#FF9800',height:50, textAlign:'center', textAlignVertical:'center',
+      width:70,
+      borderRadius:95,
+    },
+    clearButton:{
+      marginLeft:10,
+      backgroundColor:'#FF9800',height:50, textAlign:'center', textAlignVertical:'center',
+      width:70,
+      borderRadius:95,
+    },
+    signUpButton:{
+      marginLeft:10,
+      backgroundColor:'black',height:50, textAlign:'center', textAlignVertical:'center',
+      width:70,
+      color:'white',
+      borderRadius:95,
     }
 
   })

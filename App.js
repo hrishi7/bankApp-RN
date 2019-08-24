@@ -9,32 +9,48 @@ import { Ionicons } from '@expo/vector-icons';
 // import Icon from '@expo/vector-icons/Ionicons';
 
 
-//import all screens from src
-import SplashScreen from './src/screens/SplashScreen'
-import Welcome from './src/screens/Welcome'
-import Login from './src/screens/Login'
-import Register from './src/screens/Register'
-import Dashboard from './src/screens/Dashboard'
-import Profile from './src/screens/Profile'
-import CreditPoint from './src/screens/CreditPoint'
-import Logout from './src/screens/Logout'
-import AddCustomerDetails from './src/screens/AddCustomerDetails'
-import pendingCustomers from './src/screens/pendingCustomers'
-import completedCustomers from './src/screens/completedCustomers'
-import singleCustomer from './src/screens/singleCustomer'
+//import common screens from src
+import SplashScreen from './src/screens/common/SplashScreen'
+import Welcome from './src/screens/common/Welcome'
 
+//user screens
+
+import Login from './src/screens/userscreens/Login'
+import Register from './src/screens/userscreens/Register'
+import Dashboard from './src/screens/userscreens/Dashboard'
+import Profile from './src/screens/userscreens/Profile'
+import CreditPoint from './src/screens/userscreens/CreditPoint'
+import AddCustomerDetails from './src/screens/userscreens/AddCustomerDetails'
+import PendingCustomers from './src/screens/userscreens/PendingCustomers'
+import CompletedCustomers from './src/screens/userscreens/CompletedCustomers'
+import Customer from './src/screens/userscreens/Customer'
+import Notification from './src/screens/userscreens/Notification'
+import Products from './src/screens/userscreens/Products'
+import CashHistory from './src/screens/userscreens/CashHistory'
+import Product from './src/screens/userscreens/Product'
 
 
 // import all admin screens
-import AdminLogin from './src/screens/adminscreens/AdminLogin'
-import AdminRegister from './src/screens/adminscreens/AdminRegister'
+import AddProduct from './src/screens/adminscreens/AddProduct'
 import AdminDashboard from './src/screens/adminscreens/AdminDashboard'
-
-
+import AdminLogin from './src/screens/adminscreens/AdminLogin'
+import AdminProfile from './src/screens/adminscreens/AdminProfile'
+import AdminRegister from './src/screens/adminscreens/AdminRegister'
+import AdminNotification from './src/screens/adminscreens/AdminNotification'
+import AllAgent from './src/screens/adminscreens/AllAgent'
+import AllBonus from './src/screens/adminscreens/AllBonus'
+import AllCompletedCustomer from './src/screens/adminscreens/AllCompletedCustomer'
+import AllPendingCustomer from './src/screens/adminscreens/AllPendingCustomer'
+import AllProduct from './src/screens/adminscreens/AllProduct'
+import AdminCreditPoint from './src/screens/adminscreens/AdminCreditPoint'
+import EditBonus from './src/screens/adminscreens/EditBonus'
+import EditCreditPoint from './src/screens/adminscreens/EditCreditPoint'
+import SingleAgent from './src/screens/adminscreens/SingleAgent'
+import SingleCustomer from './src/screens/adminscreens/SingleCustomer'
+import SingleProduct from './src/screens/adminscreens/SingleProduct'
 
 
 import {
-  createSwitchNavigator,
   createDrawerNavigator,
   createAppContainer,
   createStackNavigator,
@@ -59,7 +75,7 @@ export default class App extends Component {
     this.setState({ isReady: true });
     setTimeout( () => {
       this.setTimePassed();
-  },1000);
+  },200);
   }
   setTimePassed() {
     this.setState({timePassed: true});
@@ -73,15 +89,16 @@ export default class App extends Component {
     }
     return (
       <AppContainer/>
+
     );
   }
 }
+
 const CustomDrawerContentComponent = (props) => (
   <Container>
     <Header style={styles.drawerHeader}>
       <Body >
         <Image
-
           style={styles.drawerImage}
           source={require('./assets/person.png')} />
           <Text style={{alignSelf:'center', paddingTop:10,justifyContent:'center', color:'white', fontSize:25}}>Hello! User</Text>
@@ -98,8 +115,7 @@ const CustomDrawerContentComponentAdmin = (props) => (
   <Container>
     <Header style={styles.drawerHeader}>
       <Body >
-        <Image
-
+         <Image
           style={styles.drawerImage}
           source={require('./assets/person.png')} />
           <Text style={{alignSelf:'center', paddingTop:10,justifyContent:'center', color:'white', fontSize:25}}>Hello! Admin</Text>
@@ -112,17 +128,154 @@ const CustomDrawerContentComponentAdmin = (props) => (
   </Container>
 );
 
-const DashboardDetail = props =>(
-  <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-    <Text>DashboardDetail</Text>
-  </View>
-)
-// const ProfileDetail = props =>(
-//   <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-//     <Text>ProfileDetail</Text>
-//   </View>
-// )
 
+//admin stacknavigators below and drawer navigator
+
+const AdminDashboardStack = createStackNavigator({
+  AdminDashboard:{ screen: AdminDashboard,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Dashboard',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+});
+const AllProductStack = createStackNavigator({
+  AllProduct:{ screen: AllProduct,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Loans & Policies',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+  SingleProduct:SingleProduct
+});
+const AdminProfileStack = createStackNavigator({
+  AdminProfile:{ screen: AdminProfile,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Profile',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+});
+const AllAgentStack = createStackNavigator({
+  AllAgent:{ screen: AllAgent,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Registered Agents',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+  SingleAgent: SingleAgent
+});
+const AllBonusStack = createStackNavigator({
+  AllBonus:{ screen: AllBonus,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Bonus List',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+  EditBonus: EditBonus
+});
+const AllCompletedCustomerStack = createStackNavigator({
+  AllCompletedCustomer:{ screen: AllCompletedCustomer,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Approved Customers',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+  SingleCustomer: SingleCustomer
+});
+const AllPendingCustomerStack = createStackNavigator({
+  AllPendingCustomer:{ screen: AllPendingCustomer,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Pending Customers',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+  SingleCustomer: SingleCustomer
+});
+
+const AdminCreditPointStack = createStackNavigator({
+  AdminCreditPoint:{ screen: AdminCreditPoint,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Credit Point',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+  EditCreditPoint: EditCreditPoint
+});
+
+
+const AppAdminDashboardDrawerNavigator = createDrawerNavigator({
+    AdminDashboard:{ screen: AdminDashboardStack},
+    AllProduct:{ screen: AllProductStack},
+    AddProduct:{ screen: AddProduct},
+    AllPendingCustomer:{ screen: AllPendingCustomerStack},
+    AllAgent:{ screen: AllAgentStack},
+    AllBonus:{ screen: AllBonusStack},
+    AdminCreditPoint:{ screen: AdminCreditPointStack},
+    AllCompletedCustomer:{ screen: AllCompletedCustomerStack},
+    AdminNotification:{ screen: AdminNotification},
+    AdminProfile:{ screen: AdminProfileStack},
+  },{
+    // initialRouteName: 'AdminDashboard',
+    drawerPosition: 'left',
+    contentComponent: CustomDrawerContentComponentAdmin,
+    drawerOpenRoute: 'DrawerOpen',
+    drawerCloseRoute: 'DrawerClose',
+    drawerToggleRoute: 'DrawerToggle',
+})
+
+
+
+
+// User stacknavigator and drawernavigation
 const DashboardStack = createStackNavigator({
   Dashboard:{ screen: Dashboard,
     navigationOptions:({navigation})=>{
@@ -136,43 +289,12 @@ const DashboardStack = createStackNavigator({
       }
     }
   },
-  DashboardDetail:{ screen: DashboardDetail}
-})
-
-const AdminDashboardStack = createStackNavigator({
-  AdminDashboard:{ screen: AdminDashboard,
-    navigationOptions:({navigation})=>{
-      return{
-        headerTitle:'AdminDashboard',
-        headerLeft:(
-          <Ionicons style={{paddingLeft:10}}
-           onPress={()=> navigation.openDrawer()}
-          name="md-menu" size={30}/>
-        )
-      }
-    }
-  }
-})
-
-const ProfileStack = createStackNavigator({
-  Profile:{ screen: Profile,
-    navigationOptions:({navigation})=>{
-      return{
-        headerTitle:'Profile',
-        headerLeft:(
-          <Ionicons style={{paddingLeft:10}}
-           onPress={()=> navigation.openDrawer()}
-          name="md-menu" size={30}/>
-        )
-      }
-    }
-  },
-})
+});
 const AddCustomerDetailsStack = createStackNavigator({
   AddCustomerDetails:{ screen: AddCustomerDetails,
     navigationOptions:({navigation})=>{
       return{
-        headerTitle:'Customer Details',
+        headerTitle:'Adding Customer',
         headerLeft:(
           <Ionicons style={{paddingLeft:10}}
            onPress={()=> navigation.openDrawer()}
@@ -181,12 +303,12 @@ const AddCustomerDetailsStack = createStackNavigator({
       }
     }
   },
-})
-const pendingCustomersStack = createStackNavigator({
-  pendingCustomers:{ screen: pendingCustomers,
+});
+const PendingCustomersStack = createStackNavigator({
+  PendingCustomers:{ screen: PendingCustomers,
     navigationOptions:({navigation})=>{
       return{
-        headerTitle:'Pending Customer',
+        headerTitle:'Pending Customers',
         headerLeft:(
           <Ionicons style={{paddingLeft:10}}
            onPress={()=> navigation.openDrawer()}
@@ -195,25 +317,13 @@ const pendingCustomersStack = createStackNavigator({
       }
     }
   },
-  singleCustomer:{ screen: singleCustomer,
+  Customer: Customer
+});
+const CompletedCustomersStack = createStackNavigator({
+  CompletedCustomers:{ screen: CompletedCustomers,
     navigationOptions:({navigation})=>{
       return{
-        headerTitle:'Customer Info',
-        headerLeft:(
-          <Ionicons style={{paddingLeft:10}}
-           onPress={()=> navigation.openDrawer()}
-          name="md-menu" size={30}/>
-        )
-      }
-    }
-  }
-})
-
-const completedCustomersStack = createStackNavigator({
-  completedCustomers:{ screen: completedCustomers,
-    navigationOptions:({navigation})=>{
-      return{
-        headerTitle:'Completed Customer',
+        headerTitle:'Approved Customers',
         headerLeft:(
           <Ionicons style={{paddingLeft:10}}
            onPress={()=> navigation.openDrawer()}
@@ -222,25 +332,13 @@ const completedCustomersStack = createStackNavigator({
       }
     }
   },
-  singleCustomer:{ screen: singleCustomer,
-    navigationOptions:({navigation})=>{
-      return{
-        headerTitle:'Customer Info',
-        headerLeft:(
-          <Ionicons style={{paddingLeft:10}}
-           onPress={()=> navigation.openDrawer()}
-          name="md-menu" size={30}/>
-        )
-      }
-    }
-  }
-})
-
+  Customer:Customer
+});
 const CreditPointStack = createStackNavigator({
   CreditPoint:{ screen: CreditPoint,
     navigationOptions:({navigation})=>{
       return{
-        headerTitle:'CreditPoint',
+        headerTitle:'Points',
         headerLeft:(
           <Ionicons style={{paddingLeft:10}}
            onPress={()=> navigation.openDrawer()}
@@ -248,14 +346,13 @@ const CreditPointStack = createStackNavigator({
         )
       }
     }
-  },
-})
-
-const LogoutStack = createStackNavigator({
-  Logout:{ screen: Logout,
+  }
+});
+const ProductsStack = createStackNavigator({
+  Products:{ screen: Products,
     navigationOptions:({navigation})=>{
       return{
-        headerTitle:'Logout',
+        headerTitle:'Bonus List',
         headerLeft:(
           <Ionicons style={{paddingLeft:10}}
            onPress={()=> navigation.openDrawer()}
@@ -264,40 +361,50 @@ const LogoutStack = createStackNavigator({
       }
     }
   },
-})
+  Product: Product
+});
 
-const AppDashboardDrawerNavigator = createDrawerNavigator(
-  {
+
+const AppDashboardDrawerNavigator = createDrawerNavigator({
     Dashboard:{ screen: DashboardStack},
-    Profile:{ screen: ProfileStack},
     AddCustomerDetails:{ screen: AddCustomerDetailsStack},
-    pendingCustomers:{ screen: pendingCustomersStack},
-    completedCustomers:{ screen: completedCustomersStack},
-    CreditPoint: { screen: CreditPointStack},
-    Logout: { screen: LogoutStack},
+    PendingCustomers:{ screen: PendingCustomersStack},
+    CompletedCustomers:{ screen: CompletedCustomersStack},
+    CreditPoint:{ screen: CreditPointStack},
+    Products:{ screen: ProductsStack},
+    Notification:{ screen: Notification,
+      navigationOptions:({navigation})=>{
+        return{
+          headerTitle:'Notification',
+          headerLeft:(
+            <Ionicons style={{paddingLeft:10}}
+             onPress={()=> navigation.openDrawer()}
+            name="md-menu" size={30}/>
+          )
+        }
+      }},
+    Profile:{ screen: Profile,
+      navigationOptions:({navigation})=>{
+        return{
+          headerTitle:'Profile',
+          headerLeft:(
+            <Ionicons style={{paddingLeft:10}}
+             onPress={()=> navigation.openDrawer()}
+            name="md-menu" size={30}/>
+          )
+        }
+      }},
   },{
-    initialRouteName: 'Dashboard',
     drawerPosition: 'left',
     contentComponent: CustomDrawerContentComponent,
     drawerOpenRoute: 'DrawerOpen',
     drawerCloseRoute: 'DrawerClose',
     drawerToggleRoute: 'DrawerToggle',
-  }
-)
+})
 
-const AppAdminDashboardDrawerNavigator = createDrawerNavigator(
-  {
-    AdminDashboard:{ screen: AdminDashboardStack},
-  },{
-    initialRouteName: 'AdminDashboard',
-    drawerPosition: 'left',
-    contentComponent: CustomDrawerContentComponentAdmin,
-    drawerOpenRoute: 'DrawerOpen',
-    drawerCloseRoute: 'DrawerClose',
-    drawerToggleRoute: 'DrawerToggle',
-  }
-)
 
+
+//below main stack naigator
 const AppStackNavigator = createStackNavigator({
   Welcome:{ screen: Welcome,
       navigationOptions: {

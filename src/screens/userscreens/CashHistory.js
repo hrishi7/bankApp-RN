@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import { Text, View } from 'react-native'
-import { Button } from 'native-base';
 
-export default class singleCustomer extends Component {
+export default class CashHistory extends Component {
   render() {
     return (
       <View>
-        <Text>Single customer</Text>
+        <Text> CashHistory </Text>
       </View>
     )
   }

@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View,Button,Image } from 'react-native';
-
+import Profile from './Profile';
 
 export default class Dashboard extends Component {
   static navigationOptions = {
     drawerLabel: 'Dashboard',
     drawerIcon: ({ tintColor }) => (
       <Image
-        source={require('../../assets/icon.png')}
+        source={require('../../../assets/icon.png')}
         style={[styles.icon, {tintColor: tintColor}]}
       />
     ),
@@ -15,7 +15,7 @@ export default class Dashboard extends Component {
     render() {
       return (
         <View>
-          <Text> Dashboard </Text>
+          <Text>Welcome To Syndicate bank</Text>
         </View>
       )
     }

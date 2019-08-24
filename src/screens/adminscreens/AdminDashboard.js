@@ -15,7 +15,7 @@ export default class AdminDashboard extends Component {
     render() {
       return (
         <View>
-          <Text> AdminDashboard </Text>
+          <Text> Welcome to Syndicate Bank</Text>
         </View>
       )
     }
