@@ -14,8 +14,13 @@ export default class Dashboard extends Component {
   };
     render() {
       return (
-        <View>
-          <Text>Welcome To Syndicate bank</Text>
+        <View style={{justifyContent:'center', alignItems:'center'}}>
+          <Text
+          style={{
+            textAlign:'center', fontSize:30,
+            color:'#ff5722',fontWeight:'bold'
+          }}
+          >Welcome To Syndicate bank</Text>
         </View>
       )
     }

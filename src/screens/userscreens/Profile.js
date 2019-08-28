@@ -66,6 +66,10 @@ export default class Profile extends Component {
     confirm('Are you sure?');
     alert('account is deleted now!')
   }
+  handleLogout = async() =>{
+    await AsyncStorage.removeItem('USER');
+    this.props.navigation.navigate('Login');
+  }
     render() {
       return (
         <KeyboardAwareScrollView
@@ -114,6 +118,12 @@ export default class Profile extends Component {
                   onPress={()=> this.handleUpdate()}
                   >
                   <Text style={{textAlign:'center', textAlignVertical:'center', color:'white', fontSize:25, fontFamily:'Roboto'}}>Update</Text>
+              </Button>
+              <Button block
+                  style={{height:65, margin:15,borderTopStartRadius:40,backgroundColor:'black', borderTopEndRadius:45}}
+                  onPress={()=> this.handleLogout()}
+                  >
+                  <Text style={{textAlign:'center', textAlignVertical:'center', color:'white', fontSize:22, fontFamily:'Roboto'}}>Logout</Text>
               </Button>
               <Button block
                   style={{height:65, margin:15,borderTopStartRadius:40,backgroundColor:'black', borderTopEndRadius:45}}

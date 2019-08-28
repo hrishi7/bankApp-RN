@@ -8,7 +8,7 @@ import jwt_decode from "jwt-decode";
 import axios from 'axios';
 
 
-// import {androidClientId, baseUrl} from '../../../scretKey';
+import {androidClientId, baseUrl} from '../../../scretKey';
 
 
 export default class Login extends Component {
@@ -20,36 +20,34 @@ export default class Login extends Component {
     }
   }
   handleDefaultLogin = async () =>{
-    // let loginUser = {
-    //   signInType:'default',
-    //   email:this.state.email,
-    //   password:this.state.password
-    // }
+    let loginUser = {
+      signInType:'default',
+      email:this.state.email,
+      password:this.state.password
+    }
 
-    // // console.log(loginUser);
-    // //call backend and then set toke to axios auth header
-    // // then create user obj and
-    // // save asyncStorage
+    // console.log(loginUser);
+    //call backend and then set toke to axios auth header
+    // then create user obj and
+    // save asyncStorage
 
-    // //login
-    // let res = await axios.post(`${baseUrl}/api/common/auth/login`,loginUser);
-    //   if(res.data.success == true){
-    //     ToastAndroid.show('Login succesfull!', ToastAndroid.SHORT);
-    //     let user = {
-    //       token: res.data.token,
-    //       isAuthenticated:true,
-    //       signInType:'default',
-    //     }
-    //     axios.defaults.headers.common["Authorization"] = user.token;
-    //     AsyncStorage.setItem('USER', JSON.stringify(user));
-    //     this.props.navigation.navigate('Dashboard');
-    //   }
-    //   else {
-    //     ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-    //     this.handleClear();
-    //   }
+    //login
+    let res = await axios.post(`${baseUrl}/api/common/auth/login`,loginUser);
+      if(res.data.success == true){
+        ToastAndroid.show('Login succesfull!', ToastAndroid.SHORT);
+        let user = {
+          token: res.data.token,
+          isAuthenticated:true,
+          signInType:'default',
+        }
+        axios.defaults.headers.common["Authorization"] = user.token;
+        AsyncStorage.setItem('USER', JSON.stringify(user));
         this.props.navigation.navigate('Dashboard');
-
+      }
+      else {
+        ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+        this.handleClear();
+      }
   }
 
   handleClear = () => {
@@ -103,12 +101,14 @@ export default class Login extends Component {
     }
   }
   componentDidMount = async () =>{
-    // let result = await AsyncStorage.getItem('USER');
-    //   result = JSON.parse(result);
-    //   const decodedUser = jwt_decode(result.token);
-    //   if(decodedUser !== null){
-    //     this.props.navigation.navigate('Profile');
-    //   }
+    let result = await AsyncStorage.getItem('USER');
+    if(result){
+      result = JSON.parse(result);
+      const decodedUser = jwt_decode(result.token);
+      if(decodedUser !== null){
+        this.props.navigation.navigate('Profile');
+      }
+    }
   }
 
     render() {

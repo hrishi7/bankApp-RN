@@ -1,10 +1,28 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View,Button,StatusBar,Image } from 'react-native';
-
+import { StyleSheet, Text, View,Button,StatusBar,Image,AsyncStorage } from 'react-native';
+import jwt_decode from 'jwt-decode';
 
 
 export default class SplashScreen extends Component{
 
+  componentDidMount = () =>{
+    setTimeout( () => {
+      this.setTimePassed();
+    },4000);
+
+  }
+  setTimePassed = async()=> {
+    let result = await AsyncStorage.getItem('USER');
+    if(result){
+      result = JSON.parse(result);
+      const decodedUser = jwt_decode(result.token);
+      if(decodedUser !== null){
+        this.props.navigation.navigate('Profile');
+      }
+    }else{
+      this.props.navigation.navigate('Welcome');
+    }
+  }
 
     render(){
       return(

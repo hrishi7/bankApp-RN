@@ -84,9 +84,9 @@ export default class App extends Component {
     if (!this.state.isReady) {
       return <AppLoading />;
     }
-    else if(!this.state.timePassed){
-      return <SplashScreen/>
-    }
+    // else if(!this.state.timePassed){
+    //   return <SplashScreen/>
+    // }
     return (
       <AppContainer/>
 
@@ -363,7 +363,48 @@ const ProductsStack = createStackNavigator({
   },
   Product: Product
 });
-
+const ProfileStack = createStackNavigator({
+  Profile:{ screen: Profile,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Profile',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+});
+const NotificationStack = createStackNavigator({
+  Notification:{ screen: Notification,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Notification',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+});
+const CashHistoryStack = createStackNavigator({
+  CashHistory:{ screen: CashHistory,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Past Withdraws',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+});
 
 const AppDashboardDrawerNavigator = createDrawerNavigator({
     Dashboard:{ screen: DashboardStack},
@@ -372,40 +413,29 @@ const AppDashboardDrawerNavigator = createDrawerNavigator({
     CompletedCustomers:{ screen: CompletedCustomersStack},
     CreditPoint:{ screen: CreditPointStack},
     Products:{ screen: ProductsStack},
-    Notification:{ screen: Notification,
-      navigationOptions:({navigation})=>{
-        return{
-          headerTitle:'Notification',
-          headerLeft:(
-            <Ionicons style={{paddingLeft:10}}
-             onPress={()=> navigation.openDrawer()}
-            name="md-menu" size={30}/>
-          )
-        }
-      }},
-    Profile:{ screen: Profile,
-      navigationOptions:({navigation})=>{
-        return{
-          headerTitle:'Profile',
-          headerLeft:(
-            <Ionicons style={{paddingLeft:10}}
-             onPress={()=> navigation.openDrawer()}
-            name="md-menu" size={30}/>
-          )
-        }
-      }},
-  },{
-    drawerPosition: 'left',
-    contentComponent: CustomDrawerContentComponent,
-    drawerOpenRoute: 'DrawerOpen',
-    drawerCloseRoute: 'DrawerClose',
-    drawerToggleRoute: 'DrawerToggle',
-})
+    Notification:{ screen: NotificationStack},
+    CashHistory:{ screen: CashHistoryStack},
+    Profile:{ screen: ProfileStack}
+    }
+  ,
+  {
+      drawerPosition: 'left',
+      contentComponent: CustomDrawerContentComponent,
+      drawerOpenRoute: 'DrawerOpen',
+      drawerCloseRoute: 'DrawerClose',
+      drawerToggleRoute: 'DrawerToggle',
+  }
+  )
 
 
 
 //below main stack naigator
 const AppStackNavigator = createStackNavigator({
+  SplashScreen:{ screen: SplashScreen,
+    navigationOptions: {
+      header: null,
+    }
+},
   Welcome:{ screen: Welcome,
       navigationOptions: {
         header: null,
