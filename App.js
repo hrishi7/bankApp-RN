@@ -352,7 +352,7 @@ const ProductsStack = createStackNavigator({
   Products:{ screen: Products,
     navigationOptions:({navigation})=>{
       return{
-        headerTitle:'Bonus List',
+        headerTitle:'Loans and Policies',
         headerLeft:(
           <Ionicons style={{paddingLeft:10}}
            onPress={()=> navigation.openDrawer()}

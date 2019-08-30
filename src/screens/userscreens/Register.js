@@ -6,7 +6,8 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Expo from "expo"
 
 import axios from 'axios'
-// import {androidClientId, baseUrl} from '../../scretKey';
+import {baseUrl} from '../../../scretKey';
+
 
 export default class Register extends Component {
   constructor(props){
@@ -18,73 +19,38 @@ export default class Register extends Component {
       mobile:""
     }
   }
-  handleDefaultSignUp = () =>{
-    let newAgent = {
-      name:this.state.name,
-      email:this.state.email,
-      password:this.state.password,
-      mobile:this.state.mobile,
-      joiningDate: new Date(),
-      isAdmin:false
+  checkValidation = () =>{
+    if(this.state.name == '' && this.state.email == ''
+    && this.state.mobile && this.state.password == '' )
+    {
+        return false;
     }
-    // console.log(newAgent);
-    //navigate to login screen
-    axios.post(`${baseUrl}/api/common/auth/signUp`,newAgent)
-    .then(res =>{
-      // console.log(res.data.msg);
-      ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-      // console.log(res.data.msg);
-      this.props.navigation.navigate('Login');
-    })
-  }
-
-  handleGoogleSignUp = async () =>{
-    try {
-      const result = await Expo.Google.logInAsync({
-        androidClientId:
-          "182867259493-1n2dcoq4isd0reck2593t5mmkaq5vpmr.apps.googleusercontent.com",
-        //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
-        scopes: ["profile", "email"]
-      })
-
-
-      if (result.type === "success") {
-        // let user ={
-        //   isAuthenticated:true,
-
-
-        //   accessToken:result.accessToken
-        // }
-
-        let newUser = {
-          signInType:'google',
-          isAdmin:false,
-          name: result.user.name,
-          email:result.user.email,
-          profileImage: result.user.photoUrl? result.user.photoUrl:"https://i.ibb.co/cytsxWb/default-Men-Dp.png",
-        }
-        console.log(newUser);
-
-        //backend call to login route
-
-        //after succesfull getting the token set axios header and set the asyncstorage with user object containing accessToken
-        //and also navigate to Profile screen
-
-
-
-        // await AsyncStorage.setItem('USER_INFO', JSON.stringify(user));
-        // this.props.navigation.navigate('Profile')
-        // this.setState({
-        //   signedIn: true,
-        //   name: result.user.name,
-        //   photoUrl: result.user.photoUrl,
-        //   accessTokenObj: result.accessToken
-        // })
-      } else {
-        alert("cancelled")
+    return true;
+}
+  handleDefaultSignUp = () =>{
+    if(this.checkValidation()){
+      let dt = new Date();
+      let newAgent = {
+        name:this.state.name,
+        email:this.state.email,
+        password:this.state.password,
+        mobile:this.state.mobile,
+        signInType:'default',
+        joiningDate: dt.getDate() + "-" + (dt.getMonth() <10? ("0"+ dt.getMonth()):dt.getMonth()) + "-"+ dt.getFullYear(),
+        isAdmin:false
       }
-    } catch (e) {
-      alert("error"+ e)
+      // console.log(newAgent);
+      //navigate to login screen
+      axios.post(`${baseUrl}/api/common/auth/signUp`,newAgent)
+      .then(res =>{
+        ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+        if(res.data.msg == 'signUp successfull!'){
+          this.handleClear();
+          this.props.navigation.navigate('Login');
+        }
+      })
+    }else{
+      ToastAndroid.show('All fields mandetory to fill', ToastAndroid.SHORT);
     }
   }
 
@@ -101,14 +67,14 @@ export default class Register extends Component {
         <Container style={styles.container}>
         <StatusBar hidden />
         <View style={{flexDirection:'column'}}>
-          <Text style={styles.appTitle}>Register with </Text>
-            <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', paddingTop:15, marginBottom:35}}>
+          <Text style={styles.appTitle}>Register </Text>
+            {/* <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', paddingTop:15, marginBottom:35}}>
               <TouchableOpacity
                     onPress={()=> this.handleGoogleSignUp()}
               >
                     <Ionicons style={styles.adminButton} name='logo-google' size={30}/>
               </TouchableOpacity>
-            </View>
+            </View> */}
             <Text style={styles.smallTitle}>Be Traditional </Text>
           <Form style={styles.formView}>
                   <Item floatingLabel>
@@ -166,8 +132,6 @@ export default class Register extends Component {
             </View>
         </View>
     </Container>
-
-
       )
     }
   }

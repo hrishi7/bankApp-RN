@@ -8,7 +8,7 @@ import jwt_decode from "jwt-decode";
 import axios from 'axios';
 
 
-import {androidClientId, baseUrl} from '../../../scretKey';
+import {baseUrl} from '../../../scretKey';
 
 
 export default class Login extends Component {
@@ -42,6 +42,7 @@ export default class Login extends Component {
         }
         axios.defaults.headers.common["Authorization"] = user.token;
         AsyncStorage.setItem('USER', JSON.stringify(user));
+        this.handleClear();
         this.props.navigation.navigate('Dashboard');
       }
       else {
@@ -80,9 +81,24 @@ export default class Login extends Component {
           email:result.user.email,
           profileImage: result.user.photoUrl? result.user.photoUrl:"https://i.ibb.co/cytsxWb/default-Men-Dp.png",
         }
-        console.log(newUser);
         //backend call
-
+        let res = await axios.post(`${baseUrl}/api/common/auth/login`,newUser);
+        if(res.data.success == true){
+          ToastAndroid.show('Login succesfull!', ToastAndroid.SHORT);
+          let user = {
+            token: res.data.token,
+            isAuthenticated:true,
+            signInType:'google',
+            accessToken:result.accessToken
+          }
+          axios.defaults.headers.common["Authorization"] = user.token;
+          AsyncStorage.setItem('USER', JSON.stringify(user));
+          this.props.navigation.navigate('Dashboard');
+        }
+        else {
+          ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+          this.handleClear();
+        }
 
 
         // await AsyncStorage.setItem('USER_INFO', JSON.stringify(user));

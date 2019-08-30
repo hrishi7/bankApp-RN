@@ -4,6 +4,7 @@ import {Container, Content,Thumbnail,Form,Item,Label,Input,Button,H4} from 'nati
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import jwt_decode from "jwt-decode";
+import * as Expo from "expo";
 
 import axios from 'axios';
 // import { baseUrl } from '../../scretKey';
@@ -67,8 +68,17 @@ export default class Profile extends Component {
     alert('account is deleted now!')
   }
   handleLogout = async() =>{
-    await AsyncStorage.removeItem('USER');
-    this.props.navigation.navigate('Login');
+    // let result = await AsyncStorage.getItem('USER');
+    //   result = JSON.parse(result);
+    //   if(result.signInType === 'google'){
+    //     await Expo.Google.logOutAsync({
+    //       androidClientId:
+    //       "182867259493-1n2dcoq4isd0reck2593t5mmkaq5vpmr.apps.googleusercontent.com",
+    //       accessToken:result.accessToken
+    //     })
+    //   }
+      await AsyncStorage.removeItem('USER');
+      this.props.navigation.navigate('Login');
   }
     render() {
       return (

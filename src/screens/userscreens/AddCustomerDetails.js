@@ -56,7 +56,7 @@ export default class AddCustomerDetails extends Component {
             newCustomer.idProofNumber = this.state.idProofNumber;
             newCustomer.loanTitle = this.state.loanTitle;
             newCustomer.loanAmount = this.state.loanAmount;
-            newCustomer.applyDate = dt.getDate() + "-" + (dt.getMonth() <10? ("0"+ dt.getMonth()):dt.getMonth()) + "-"+ dt.getFullYear();;
+            newCustomer.applyDate = dt.getDate() + "-" + (dt.getMonth() <10? ("0"+ dt.getMonth()):dt.getMonth()) + "-"+ dt.getFullYear();
 
             let res = await axios.post(`${baseUrl}/api/user/customer/customerRegister`,newCustomer);
             ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
