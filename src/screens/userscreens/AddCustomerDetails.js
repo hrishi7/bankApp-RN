@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View ,ScrollView,TextInput,ToastAndroid} from 'react-native';
+import { StyleSheet, Text, View ,ScrollView,TextInput,ToastAndroid, AsyncStorage} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import {Container,
@@ -12,7 +12,7 @@ import {Container,
     Input,Button,Textarea,Picker} from 'native-base'
 import { Row, Grid } from 'react-native-easy-grid';
 
-import {androidClientId, baseUrl} from '../../../scretKey';
+import {baseUrl} from '../../../scretKey';
 
 import axios from 'axios';
 
@@ -28,6 +28,7 @@ export default class AddCustomerDetails extends Component {
             idProofNumber:"",
             loanTitle:"",
             loanAmount:"",
+            products:[]
         }
     }
 
@@ -58,6 +59,9 @@ export default class AddCustomerDetails extends Component {
             newCustomer.loanAmount = this.state.loanAmount;
             newCustomer.applyDate = dt.getDate() + "-" + (dt.getMonth() <10? ("0"+ dt.getMonth()):dt.getMonth()) + "-"+ dt.getFullYear();
 
+            let user = await AsyncStorage.getItem('USER');
+            user = JSON.parse(user);
+            axios.defaults.headers.common["Authorization"] = user.token;
             let res = await axios.post(`${baseUrl}/api/user/customer/customerRegister`,newCustomer);
             ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
             this.handleClear();
@@ -77,6 +81,14 @@ export default class AddCustomerDetails extends Component {
             loanTitle:"loan0",
             loanAmount:"",
         })
+    }
+    componentDidMount = async() =>{
+        let user = await AsyncStorage.getItem('USER');
+        user = JSON.parse(user);
+        axios.defaults.headers.common["Authorization"] = user.token;
+        let res = await axios.get(`${baseUrl}/api/common/productRead/getAll`);
+        this.setState({ products:res.data});
+        console.log(res.data);
     }
 
     render() {
@@ -162,11 +174,18 @@ export default class AddCustomerDetails extends Component {
                                         onValueChange={(loanTitle)=>this.setState({loanTitle})}
                                     >
                                         <Picker.Item label="Select Loan Type" value="loan0" />
-                                        <Picker.Item label="Education Loan" value="Education Loan" />
-                                        <Picker.Item label="House Loan" value="House Loan" />
-                                        <Picker.Item label="Car Loan" value="Car Loan" />
-                                        <Picker.Item label="Policy 1" value="Policy 1" />
-                                        <Picker.Item label="Policy 2" value="Policy 2" />
+                                        {
+                                            this.state.products.length> 0?
+                                            this.state.products.map(each=>(
+                                            <Picker.Item
+                                            key={each._id}
+                                                label={`${each.productTitle}`}
+                                                value={`${each.productTitle}`}
+                                            />
+
+                                            )):
+                                        <Picker.Item label="No Product found" value="loan0" />
+                                        }
                                     </Picker>
                                 </Item>
                             <Item floatingLabel  style={{margin:8}}>

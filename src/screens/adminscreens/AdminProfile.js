@@ -61,7 +61,19 @@ export default class AdminProfile extends Component {
   handleUpdate = async() =>{
     console.log(this.state)
   }
-
+  handleLogout = async() =>{
+    // let result = await AsyncStorage.getItem('USER');
+    //   result = JSON.parse(result);
+    //   if(result.signInType === 'google'){
+    //     await Expo.Google.logOutAsync({
+    //       androidClientId:
+    //       "182867259493-1n2dcoq4isd0reck2593t5mmkaq5vpmr.apps.googleusercontent.com",
+    //       accessToken:result.accessToken
+    //     })
+    //   }
+      await AsyncStorage.removeItem('USER');
+      this.props.navigation.navigate('AdminLogin');
+  }
   handleDeleteAccount = async() =>{
     confirm('Are you sure?');
     alert('account is deleted now!')
@@ -109,11 +121,18 @@ export default class AdminProfile extends Component {
                     />
                   </Item>
               </Form>
+
               <Button block
                   style={{height:70, margin:15,borderTopStartRadius:45,backgroundColor:'black', borderTopEndRadius:45}}
                   onPress={()=> this.handleUpdate()}
                   >
                   <Text style={{textAlign:'center', textAlignVertical:'center', color:'white', fontSize:25, fontFamily:'Roboto'}}>Update</Text>
+              </Button>
+              <Button block
+                  style={{height:70, margin:15,borderTopStartRadius:45,backgroundColor:'black', borderTopEndRadius:45}}
+                  onPress={()=> this.handleLogout()}
+                  >
+                  <Text style={{textAlign:'center', textAlignVertical:'center', color:'white', fontSize:25, fontFamily:'Roboto'}}>Logout</Text>
               </Button>
               <Button block
                   style={{height:65, margin:15,borderTopStartRadius:40,backgroundColor:'black', borderTopEndRadius:45}}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View,StatusBar,TouchableOpacity,AsyncStorage,ToastAndroid } from 'react-native';
+import { StyleSheet, View,StatusBar,TouchableOpacity,AsyncStorage,ToastAndroid,BackHandler } from 'react-native';
 import {Container, Text,Form,Item,Label,Input} from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import * as Expo from "expo"
@@ -12,6 +12,12 @@ import {baseUrl} from '../../../scretKey';
 
 
 export default class Login extends Component {
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+}
+handleBackButtonClick = () =>{
+  return true;
+}
   constructor(props){
     super(props);
     this.state ={
@@ -177,6 +183,15 @@ export default class Login extends Component {
               onPress={()=> this.props.navigation.navigate('Register')}
               >
                 <Text style={styles.signUpButton}>SignUp</Text>
+              </TouchableOpacity>
+
+              </View>
+              <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop:10}}>
+              <Text style={{fontFamily:'Roboto', fontSize:15}}>Not a Agent? Choose Correct then</Text>
+              <TouchableOpacity
+              onPress={()=> this.props.navigation.navigate('Welcome')}
+              >
+                <Text style={styles.signUpButton}>Choose</Text>
               </TouchableOpacity>
 
               </View>

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View,StatusBar,TouchableOpacity,ToastAndroid } from 'react-native';
+import { StyleSheet, View,StatusBar,TouchableOpacity,ToastAndroid,BackHandler } from 'react-native';
 import {Container,Content,H2,Header,Button, Text,H3, Form, Item,Icon, Input, Label,H4,Fab} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,6 +10,12 @@ import {baseUrl} from '../../../scretKey';
 
 
 export default class Register extends Component {
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+}
+handleBackButtonClick = () =>{
+  return true;
+}
   constructor(props){
     super(props);
     this.state={
@@ -130,6 +136,15 @@ export default class Register extends Component {
             </TouchableOpacity>
 
             </View>
+            <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center', marginTop:10}}>
+              <Text style={{fontFamily:'Roboto', fontSize:15}}>Not a Agent? Choose Correct then</Text>
+              <TouchableOpacity
+              onPress={()=> this.props.navigation.navigate('Welcome')}
+              >
+                <Text style={styles.signUpButton}>Choose</Text>
+              </TouchableOpacity>
+
+              </View>
         </View>
     </Container>
       )

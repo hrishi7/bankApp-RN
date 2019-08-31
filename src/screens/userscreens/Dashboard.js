@@ -1,8 +1,14 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View,Button,Image } from 'react-native';
+import { StyleSheet, Text, View,Button,Image,BackHandler,Alert } from 'react-native';
 import Profile from './Profile';
 
 export default class Dashboard extends Component {
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+}
+handleBackButtonClick = () =>{
+  return true;
+}
   static navigationOptions = {
     drawerLabel: 'Dashboard',
     drawerIcon: ({ tintColor }) => (

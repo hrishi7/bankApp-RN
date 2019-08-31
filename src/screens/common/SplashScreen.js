@@ -17,6 +17,9 @@ export default class SplashScreen extends Component{
       result = JSON.parse(result);
       const decodedUser = jwt_decode(result.token);
       if(decodedUser !== null){
+        if(decodedUser.isAdmin == true){
+          return this.props.navigation.navigate('AdminDashboard');
+        }
         this.props.navigation.navigate('Profile');
       }
     }else{

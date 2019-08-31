@@ -36,18 +36,15 @@ import AdminDashboard from './src/screens/adminscreens/AdminDashboard'
 import AdminLogin from './src/screens/adminscreens/AdminLogin'
 import AdminProfile from './src/screens/adminscreens/AdminProfile'
 import AdminRegister from './src/screens/adminscreens/AdminRegister'
-import AdminNotification from './src/screens/adminscreens/AdminNotification'
+// import AdminNotification from './src/screens/adminscreens/AdminNotification'
 import AllAgent from './src/screens/adminscreens/AllAgent'
 import AllBonus from './src/screens/adminscreens/AllBonus'
-import AllCompletedCustomer from './src/screens/adminscreens/AllCompletedCustomer'
+import AllCustomer from './src/screens/adminscreens/AllCustomer'
 import AllPendingCustomer from './src/screens/adminscreens/AllPendingCustomer'
 import AllProduct from './src/screens/adminscreens/AllProduct'
 import AdminCreditPoint from './src/screens/adminscreens/AdminCreditPoint'
 import EditBonus from './src/screens/adminscreens/EditBonus'
-import EditCreditPoint from './src/screens/adminscreens/EditCreditPoint'
-import SingleAgent from './src/screens/adminscreens/SingleAgent'
 import SingleCustomer from './src/screens/adminscreens/SingleCustomer'
-import SingleProduct from './src/screens/adminscreens/SingleProduct'
 
 
 import {
@@ -157,8 +154,7 @@ const AllProductStack = createStackNavigator({
         )
       }
     }
-  },
-  SingleProduct:SingleProduct
+  }
 });
 const AdminProfileStack = createStackNavigator({
   AdminProfile:{ screen: AdminProfile,
@@ -187,7 +183,6 @@ const AllAgentStack = createStackNavigator({
       }
     }
   },
-  SingleAgent: SingleAgent
 });
 const AllBonusStack = createStackNavigator({
   AllBonus:{ screen: AllBonus,
@@ -202,13 +197,26 @@ const AllBonusStack = createStackNavigator({
       }
     }
   },
-  EditBonus: EditBonus
 });
-const AllCompletedCustomerStack = createStackNavigator({
-  AllCompletedCustomer:{ screen: AllCompletedCustomer,
+const EditBonusStack = createStackNavigator({
+  EditBonus:{ screen: EditBonus,
     navigationOptions:({navigation})=>{
       return{
-        headerTitle:'Approved Customers',
+        headerTitle:'Bonus List',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  },
+});
+const AllCustomerStack = createStackNavigator({
+  AllCustomer:{ screen: AllCustomer,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'All Customers',
         headerLeft:(
           <Ionicons style={{paddingLeft:10}}
            onPress={()=> navigation.openDrawer()}
@@ -247,21 +255,35 @@ const AdminCreditPointStack = createStackNavigator({
         )
       }
     }
-  },
-  EditCreditPoint: EditCreditPoint
+  }
+});
+
+const AddProductStack = createStackNavigator({
+  AddProduct:{ screen: AddProduct,
+    navigationOptions:({navigation})=>{
+      return{
+        headerTitle:'Loan and Policies',
+        headerLeft:(
+          <Ionicons style={{paddingLeft:10}}
+           onPress={()=> navigation.openDrawer()}
+          name="md-menu" size={30}/>
+        )
+      }
+    }
+  }
 });
 
 
 const AppAdminDashboardDrawerNavigator = createDrawerNavigator({
     AdminDashboard:{ screen: AdminDashboardStack},
     AllProduct:{ screen: AllProductStack},
-    AddProduct:{ screen: AddProduct},
+    AddProduct:{ screen: AddProductStack},
     AllPendingCustomer:{ screen: AllPendingCustomerStack},
     AllAgent:{ screen: AllAgentStack},
     AllBonus:{ screen: AllBonusStack},
+    EditBonus:{ screen: EditBonusStack},
     AdminCreditPoint:{ screen: AdminCreditPointStack},
-    AllCompletedCustomer:{ screen: AllCompletedCustomerStack},
-    AdminNotification:{ screen: AdminNotification},
+    AllCustomer:{ screen: AllCustomerStack},
     AdminProfile:{ screen: AdminProfileStack},
   },{
     // initialRouteName: 'AdminDashboard',
@@ -444,6 +466,7 @@ const AppStackNavigator = createStackNavigator({
   Login: { screen: Login,
     navigationOptions:({navigation})=>{
       return{
+        headerLeft:null,
         headerTitle:'Agent',
       }
     }
@@ -451,6 +474,7 @@ const AppStackNavigator = createStackNavigator({
   AdminLogin: { screen: AdminLogin,
     navigationOptions:({navigation})=>{
       return{
+        headerLeft:null,
         headerTitle:'Admin',
       }
     }
@@ -458,6 +482,7 @@ const AppStackNavigator = createStackNavigator({
   Register: { screen: Register,
     navigationOptions:({navigation})=>{
       return{
+        headerLeft:null,
         headerTitle:'Agent',
       }
     }
@@ -465,6 +490,7 @@ const AppStackNavigator = createStackNavigator({
   AdminRegister: { screen: AdminRegister,
     navigationOptions:({navigation})=>{
       return{
+        headerLeft:null,
         headerTitle:'Admin',
       }
     }

@@ -1,8 +1,14 @@
 import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import { Text, View, BackHandler } from 'react-native'
 import { Button } from 'native-base';
 
 export default class Product extends Component {
+  componentWillMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+}
+handleBackButtonClick = () =>{
+  return false;
+}
   constructor(props){
     super(props);
     this.state ={

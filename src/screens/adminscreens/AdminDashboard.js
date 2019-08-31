@@ -15,7 +15,7 @@ export default class AdminDashboard extends Component {
     render() {
       return (
         <View>
-          <Text> Welcome to Syndicate Bank</Text>
+          <Text style={{textAlign:'center', fontSize:22, color:'orange'}}> Welcome to Syndicate Bank</Text>
         </View>
       )
     }

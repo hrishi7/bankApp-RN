@@ -1,18 +1,52 @@
 import React, { Component } from 'react'
-import {  View } from 'react-native'
+import {  View,ActivityIndicator,AsyncStorage,FlatList,TouchableOpacity } from 'react-native'
 import { Button, Container, Content,List, ListItem, Text,Left, Right,Icon,Body } from 'native-base';
 import {Row, Grid} from 'react-native-easy-grid'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Searchbar } from 'react-native-paper';
 import {Ionicons} from '@expo/vector-icons'
+import { NavigationEvents } from "react-navigation";
+
+
+import { baseUrl} from '../../../scretKey';
+import axios from 'axios';
 
 export default class AllBonus extends Component {
   constructor(props){
     super(props);
     this.state={
       firstQuery: '',
+      allBonus:[]
     }
   }
+  componentDidMount = async() =>{
+    let user = await AsyncStorage.getItem('USER');
+    user = JSON.parse(user);
+    axios.defaults.headers.common["Authorization"] = user.token;
+
+    let res = await axios.get(`${baseUrl}/api/admin/bonus/getAll`);
+    this.setState({ allBonus: res.data})
+  }
+
+  handleGetData = async(searchText) =>{
+    let user = await AsyncStorage.getItem('USER');
+    user = JSON.parse(user);
+    axios.defaults.headers.common["Authorization"] = user.token;
+    let res = await axios.get(`${baseUrl}/api/admin/bonus/getAll/${searchText}`);
+    this.setState({ allBonus: res.data})
+  }
+  onPressBonus = (item)=>{
+    this.props.navigation.navigate('EditBonus', {'item': item });
+  }
+  renderBonus = ({ item }) => (
+    <TouchableOpacity  onPress={() => this.onPressBonus(item)} >
+    <View style={{alignItems:'center', borderBottomWidth:1, borderBottomColor:'orange', marginVertical:4}}>
+    <Text style={{textAlign:'center'}}>Reward Point: {item.creditPoint}</Text>
+    <Text style={{textAlign:'center'}}>Bonus Point: {item.bonusCreditPoint}</Text>
+    <Text style={{textAlign:'center'}}>Position: Level {item.agentLabel}</Text>
+    </View>
+    </TouchableOpacity>
+    );
   render() {
     return (
       <KeyboardAwareScrollView
@@ -21,36 +55,33 @@ export default class AllBonus extends Component {
         <Container>
           <Content>
             <Grid>
+            <NavigationEvents onDidFocus={() => this.handleGetData("")} />
               <Row size={20}>
                 <Searchbar
                 style={{width:'100%'}}
-                  placeholder="Type Credit / Bonus/label "
-                  onChangeText={query => { this.setState({ firstQuery: query }); }}
-                  value={this.state.firstQuery}
+                  placeholder="Type reward point or level.."
+                  onChangeText={query => { this.handleGetData(query)}}
+                  // value={this.state.firstQuery}
                 />
               </Row>
               <Row size={80} >
                 <List style={{width:'100%'}}>
-                    <ListItem icon
-                    onPress={()=>this.props.navigation.navigate('EditBonus', {id:1})}
-                    >
-                      <Body>
-                        <Text>100 Point - Bonus 50</Text>
-                      </Body>
-                      <Right>
-                        <Ionicons name="ios-arrow-forward" size={30} />
-                      </Right>
-                  </ListItem>
-                  <ListItem icon
-                    onPress={()=>this.props.navigation.navigate('EditBonus', {id:2})}
-                    >
-                      <Body>
-                        <Text>500 Point - Bonus 100</Text>
-                      </Body>
-                      <Right>
-                        <Ionicons name="ios-arrow-forward" size={30} />
-                      </Right>
-                  </ListItem>
+                {
+                  this.state.allBonus.length > 0 ?
+
+              (
+                <FlatList
+                style={{marginTop:5, marginBottom:10,}}
+                vertical
+                showsVerticalScrollIndicator={false}
+                numColumns={1}
+                data={this.state.allBonus}
+                renderItem={this.renderBonus}
+                keyExtractor={item => `${item._id}`}
+                />
+              ):
+                <ActivityIndicator size="small" color="#00ff00" />
+              }
                 </List>
               </Row>
             </Grid>

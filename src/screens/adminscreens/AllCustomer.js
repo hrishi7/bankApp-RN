@@ -11,29 +11,28 @@ import { NavigationEvents } from "react-navigation";
 import { baseUrl} from '../../../scretKey';
 import axios from 'axios';
 
-export default class AllProduct extends Component {
+export default class AllCustomer extends Component {
   constructor(props){
     super(props);
     this.state={
       firstQuery: '',
-      products:[]
+      customers:[]
     }
   }
   componentDidMount = async() =>{
     let user = await AsyncStorage.getItem('USER');
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
-
-    let res = await axios.get(`${baseUrl}/api/common/productRead/getAll`);
-    this.setState({ products: res.data})
+    let res = await axios.get(`${baseUrl}/api/common/customerRead/getAll`);
+    this.setState({ customers: res.data})
   }
 
   handleGetData = async(searchText) =>{
     let user = await AsyncStorage.getItem('USER');
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
-    let res = await axios.get(`${baseUrl}/api/common/productRead/getAll/${searchText}`);
-    this.setState({ products: res.data})
+    let res = await axios.get(`${baseUrl}/api/common/customerRead/getAll/${searchText}`);
+    this.setState({ customers: res.data})
   }
   render() {
     return (
@@ -47,7 +46,7 @@ export default class AllProduct extends Component {
               <Row size={20}>
                 <Searchbar
                 style={{width:'100%'}}
-                  placeholder="Type Product title.."
+                  placeholder="Type ID or name.."
                   onChangeText={query => { this.handleGetData(query)}}
                   // value={this.state.firstQuery}
                 />
@@ -55,18 +54,18 @@ export default class AllProduct extends Component {
               <Row size={80} >
                 <List style={{width:'100%'}}>
                 {
-                  this.state.products.length > 0 ?
+                  this.state.customers.length > 0 ?
 
               (
-                this.state.products.map((each, index)=>(
+                this.state.customers.map((each, index)=>(
 
                             <ListItem icon
                             key={index}
-                            onPress={()=>this.props.navigation.navigate('AddProduct',{'item':each})}
+                            onPress={()=>this.props.navigation.navigate('SingleCustomer',{'item':each})}
                             // onPress={()=>alert(each._id)}
                               >
                                 <Body>
-                                  <Text>{each.productTitle}</Text>
+                                  <Text>{each.name}</Text>
                                 </Body>
                                 <Right>
                                   <Ionicons name="ios-arrow-forward" size={30} />
