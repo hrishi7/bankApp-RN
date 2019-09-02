@@ -2,13 +2,12 @@ import React, { Component } from 'react'
 import { StyleSheet, Text, View,Button,StatusBar,Image,AsyncStorage } from 'react-native';
 import jwt_decode from 'jwt-decode';
 
-
 export default class SplashScreen extends Component{
 
   componentDidMount = () =>{
-    setTimeout( () => {
-      this.setTimePassed();
-    },4000);
+          setTimeout( () => {
+            this.setTimePassed();
+          },2000);
 
   }
   setTimePassed = async()=> {
@@ -20,7 +19,7 @@ export default class SplashScreen extends Component{
         if(decodedUser.isAdmin == true){
           return this.props.navigation.navigate('AdminDashboard');
         }
-        this.props.navigation.navigate('Profile');
+        this.props.navigation.navigate('Dashboard');
       }
     }else{
       this.props.navigation.navigate('Welcome');

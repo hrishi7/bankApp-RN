@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View ,ScrollView,AsyncStorage,ToastAndroid} from 'react-native';
+import { StyleSheet, Text, View ,
+  ScrollView,ActivityIndicator,
+  AsyncStorage,ToastAndroid} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {Container,
   Content,
@@ -25,7 +27,8 @@ import {Container,
         id:"",
         creditPoint:"",
         bonusCreditPoint:"",
-        agentLabel:""
+        agentLabel:"",
+        showLoading: 0
       }
     }
     // componentDidMount(){
@@ -52,6 +55,7 @@ import {Container,
     }
     handleSaveBonus = async() => {
       if(this.checkValidation()){
+        this.setState({ showLoading: 1})
         let newBonus = {};
 
         newBonus.creditPoint = this.state.creditPoint;
@@ -64,6 +68,10 @@ import {Container,
         axios.defaults.headers.common["Authorization"] = user.token;
 
         let res = await axios.post(`${baseUrl}/api/admin/bonus/addBonus/${this.state.id}`,newBonus);
+        if(res.status !== 200){
+          ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+        }
+        this.setState({ showLoading:0});
         ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
         // this.handleClear();
         if(res.data.msg == 'Bonus Created Successfully'
@@ -88,7 +96,7 @@ import {Container,
       this.fillStateData(data);
     }
     fillStateData = (data) =>{
-      console.log(data);
+      this.setState({showLoading: 1})
       if(data !== undefined){
         this.setState({
           id:data._id,
@@ -96,16 +104,22 @@ import {Container,
           bonusCreditPoint:data.bonusCreditPoint+"",
           agentLabel:data.agentLabel+""
         })
-        console.log(this.state);
+        this.setState({showLoading: 0})
       }
     }
     handleDelete = async()=>{
+      this.setState({showLoading: 1})
       let user = await AsyncStorage.getItem('USER');
       user = JSON.parse(user);
       axios.defaults.headers.common["Authorization"] = user.token;
       let res = await axios.delete(`${baseUrl}/api/admin/bonus/deleteBonus/${this.state.id}`);
+      if(res.status !== 200){
+        ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+      }
+      this.setState({ showLoading:0});
       ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-      // this.handleClear();
+      this.handleClear();
+
       if(res.data.msg == 'Bonus Deleted Successfully'){
         this.props.navigation.navigate('AllBonus');
       }
@@ -120,6 +134,7 @@ import {Container,
         extraScrollHeight={90}
         >
         <Container style={{height: '100%'}}>
+        {this.state.showLoading?<ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
         <NavigationEvents onDidFocus={() => this.handleFillData()} />
         <Grid>
 

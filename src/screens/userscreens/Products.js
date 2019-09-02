@@ -16,7 +16,8 @@ export default class Products extends Component {
     super(props);
     this.state={
       firstQuery: '',
-      products:[]
+      products:[],
+      showLoading:0
     }
   }
   componentDidMount = async() =>{
@@ -25,7 +26,10 @@ export default class Products extends Component {
     axios.defaults.headers.common["Authorization"] = user.token;
 
     let res = await axios.get(`${baseUrl}/api/common/productRead/getAll`);
-    this.setState({ products: res.data})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ products: res.data, showLoading: 1})
   }
 
   handleGetData = async(searchText) =>{
@@ -34,7 +38,10 @@ export default class Products extends Component {
     axios.defaults.headers.common["Authorization"] = user.token;
 
     let res = await axios.get(`${baseUrl}/api/common/productRead/getAll/${searchText}`);
-    this.setState({ products: res.data})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ products: res.data, showLoading: 1})
   }
   render() {
     return (
@@ -50,29 +57,30 @@ export default class Products extends Component {
                 style={{width:'100%'}}
                   placeholder="Type Product title.."
                   onChangeText={query => { this.handleGetData(query)}}
-                  // value={this.state.firstQuery}
                 />
               </Row>
               <Row size={80} >
                 <List style={{width:'100%'}}>
                 {
-                  this.state.products.length > 0 ?
+                  this.state.products.length > 0 || this.state.showLoading?
 
               (
+                this.state.products.length > 0 ?
                 this.state.products.map((each, index)=>(
-
-                            <ListItem icon
-                            key={index}
-                            onPress={()=>this.props.navigation.navigate('Product',{'data':each})}
-                              >
-                                <Body>
-                                  <Text>{each.productTitle}</Text>
-                                </Body>
-                                <Right>
-                                  <Ionicons name="ios-arrow-forward" size={30} />
-                                </Right>
-                            </ListItem>
+                  <ListItem icon
+                  key={index}
+                  onPress={()=>this.props.navigation.navigate('Product',{'data':each})}
+                    >
+                      <Body>
+                        <Text>{each.productTitle}</Text>
+                      </Body>
+                      <Right>
+                        <Ionicons name="ios-arrow-forward" size={30} />
+                      </Right>
+                  </ListItem>
                 ))
+                :
+                <Text>No Data Available!</Text>
               ):
                 <ActivityIndicator size="small" color="#00ff00" />
               }

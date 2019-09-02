@@ -16,7 +16,8 @@ export default class AllProduct extends Component {
     super(props);
     this.state={
       firstQuery: '',
-      products:[]
+      products:[],
+      showLoading: 0
     }
   }
   componentDidMount = async() =>{
@@ -25,6 +26,10 @@ export default class AllProduct extends Component {
     axios.defaults.headers.common["Authorization"] = user.token;
 
     let res = await axios.get(`${baseUrl}/api/common/productRead/getAll`);
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ showLoading:1});
     this.setState({ products: res.data})
   }
 
@@ -33,6 +38,10 @@ export default class AllProduct extends Component {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.get(`${baseUrl}/api/common/productRead/getAll/${searchText}`);
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ showLoading:1});
     this.setState({ products: res.data})
   }
   render() {
@@ -55,25 +64,27 @@ export default class AllProduct extends Component {
               <Row size={80} >
                 <List style={{width:'100%'}}>
                 {
+                  this.state.products.length > 0 || this.state.showLoading?
                   this.state.products.length > 0 ?
+                  (
+                    this.state.products.map((each, index)=>(
 
-              (
-                this.state.products.map((each, index)=>(
-
-                            <ListItem icon
-                            key={index}
-                            onPress={()=>this.props.navigation.navigate('AddProduct',{'item':each})}
-                            // onPress={()=>alert(each._id)}
-                              >
-                                <Body>
-                                  <Text>{each.productTitle}</Text>
-                                </Body>
-                                <Right>
-                                  <Ionicons name="ios-arrow-forward" size={30} />
-                                </Right>
-                            </ListItem>
-                ))
-              ):
+                                <ListItem icon
+                                key={index}
+                                onPress={()=>this.props.navigation.navigate('AddProduct',{'item':each})}
+                                // onPress={()=>alert(each._id)}
+                                  >
+                                    <Body>
+                                      <Text>{each.productTitle}</Text>
+                                    </Body>
+                                    <Right>
+                                      <Ionicons name="ios-arrow-forward" size={30} />
+                                    </Right>
+                                </ListItem>
+                    ))
+                  )
+                  :<Text>No Data Available!</Text>
+              :
                 <ActivityIndicator size="small" color="#00ff00" />
               }
                 </List>

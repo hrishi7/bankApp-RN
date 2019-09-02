@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet, View,StatusBar,TouchableOpacity,ToastAndroid,BackHandler } from 'react-native';
+import { StyleSheet, View,StatusBar,TouchableOpacity,ToastAndroid,BackHandler,ActivityIndicator } from 'react-native';
 import {Container,Content,H2,Header,Button, Text,H3, Form, Item,Icon, Input, Label,H4,Fab} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,7 +22,8 @@ handleBackButtonClick = () =>{
       name:"",
       email:"",
       password:"",
-      mobile:""
+      mobile:"",
+      showLoading:0
     }
   }
   checkValidation = () =>{
@@ -45,10 +46,15 @@ handleBackButtonClick = () =>{
         joiningDate: dt.getDate() + "-" + (dt.getMonth() <10? ("0"+ dt.getMonth()):dt.getMonth()) + "-"+ dt.getFullYear(),
         isAdmin:false
       }
+      this.setState({ showLoading: 1});
       // console.log(newAgent);
       //navigate to login screen
       axios.post(`${baseUrl}/api/common/auth/signUp`,newAgent)
       .then(res =>{
+        if(res.status !== 200){
+          ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+        }
+        this.setState({ showLoading:0});
         ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
         if(res.data.msg == 'signUp successfull!'){
           this.handleClear();
@@ -57,6 +63,55 @@ handleBackButtonClick = () =>{
       })
     }else{
       ToastAndroid.show('All fields mandetory to fill', ToastAndroid.SHORT);
+    }
+  }
+
+  handleGoogleLogin = async() =>{
+    try {
+      const result = await Expo.Google.logInAsync({
+        androidClientId:
+          "182867259493-1n2dcoq4isd0reck2593t5mmkaq5vpmr.apps.googleusercontent.com",
+        //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
+        scopes: ["profile", "email"]
+      })
+
+
+      if (result.type === "success") {
+        let newUser = {
+          signInType:'google',
+          isAdmin:false,
+          name: result.user.name,
+          email:result.user.email,
+          profileImage: result.user.photoUrl? result.user.photoUrl:"https://i.ibb.co/cytsxWb/default-Men-Dp.png",
+        }
+        //backend call
+        this.setState({showLoading:1})
+        let res = await axios.post(`${baseUrl}/api/common/auth/login`,newUser);
+        if(res.status !== 200){
+          ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+        }
+        this.setState({ showLoading:0})
+        if(res.data.success == true){
+          ToastAndroid.show('Login succesfull!', ToastAndroid.SHORT);
+          let user = {
+            token: res.data.token,
+            isAuthenticated:true,
+            signInType:'google',
+            accessToken:result.accessToken
+          }
+          axios.defaults.headers.common["Authorization"] = user.token;
+          AsyncStorage.setItem('USER', JSON.stringify(user));
+          this.props.navigation.navigate('Dashboard');
+        }
+        else {
+          ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+          this.handleClear();
+        }
+      } else {
+        alert("cancelled")
+      }
+    } catch (e) {
+      alert("error"+ e)
     }
   }
 
@@ -73,14 +128,15 @@ handleBackButtonClick = () =>{
         <Container style={styles.container}>
         <StatusBar hidden />
         <View style={{flexDirection:'column'}}>
-          <Text style={styles.appTitle}>Register </Text>
-            {/* <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', paddingTop:15, marginBottom:35}}>
+          {this.state.showLoading ?  <ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
+          <Text style={styles.appTitle}>Register with </Text>
+            <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', paddingTop:15, marginBottom:35}}>
               <TouchableOpacity
-                    onPress={()=> this.handleGoogleSignUp()}
+                    onPress={()=> this.handleGoogleLogin()}
               >
                     <Ionicons style={styles.adminButton} name='logo-google' size={30}/>
               </TouchableOpacity>
-            </View> */}
+            </View>
             <Text style={styles.smallTitle}>Be Traditional </Text>
           <Form style={styles.formView}>
                   <Item floatingLabel>

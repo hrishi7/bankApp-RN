@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {StyleSheet, View,StatusBar,TouchableOpacity,AsyncStorage,ToastAndroid, BackHandler } from 'react-native';
+import {StyleSheet, View,StatusBar,TouchableOpacity,AsyncStorage,ActivityIndicator,ToastAndroid, BackHandler } from 'react-native';
 import {Container,Content,H2,Header,Button, Text,H3, Form, Item,Icon, Input, Label,H4,Fab} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,39 +25,49 @@ handleBackButtonClick = () =>{
     super(props);
     this.state={
       email:"",
-      password:""
+      password:"",
+      showLoading:0
     }
   }
   handleDefaultLogin = async () =>{
-    let loginUser = {
-      signInType:'default',
-      email:this.state.email,
-      password:this.state.password
-    }
+    if(this.state.email == '' || this.state.password == ''){
+      ToastAndroid.show('Email / password cannot be empty!', ToastAndroid.SHORT);
+    }else{
+      this.setState({ showLoading: 1})
+      let loginUser = {
+        signInType:'default',
+        email:this.state.email,
+        password:this.state.password
+      }
 
-    // console.log(loginUser);
-    //call backend and then set toke to axios auth header
-    // then create user obj and
-    // save asyncStorage
+      // console.log(loginUser);
+      //call backend and then set toke to axios auth header
+      // then create user obj and
+      // save asyncStorage
 
-    //login
-    let res = await axios.post(`${baseUrl}/api/common/auth/login`,loginUser);
-      if(res.data.success == true){
-        ToastAndroid.show('Login succesfull!', ToastAndroid.SHORT);
-        let user = {
-          token: res.data.token,
-          isAuthenticated:true,
-          signInType:'default',
+      //login
+      let res = await axios.post(`${baseUrl}/api/common/auth/login`,loginUser);
+      if(res.status !== 200){
+        ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+      }
+      this.setState({ showLoading:0})
+        if(res.data.success == true){
+          ToastAndroid.show('Login succesfull!', ToastAndroid.SHORT);
+          let user = {
+            token: res.data.token,
+            isAuthenticated:true,
+            signInType:'default',
+          }
+          axios.defaults.headers.common["Authorization"] = user.token;
+          AsyncStorage.setItem('USER', JSON.stringify(user));
+          this.handleClear();
+          this.props.navigation.navigate('AdminDashboard');
         }
-        axios.defaults.headers.common["Authorization"] = user.token;
-        AsyncStorage.setItem('USER', JSON.stringify(user));
-        this.handleClear();
-        this.props.navigation.navigate('AdminDashboard');
-      }
-      else {
-        ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-        this.handleClear();
-      }
+        else {
+          ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
+          this.handleClear();
+        }
+    }
   }
 
   handleClear = () => {
@@ -66,78 +76,14 @@ handleBackButtonClick = () =>{
       password:"",
     })
   }
-  // handleGoogleLogin = async() =>{
-  //   try {
-  //     const result = await Expo.Google.logInAsync({
-  //       androidClientId:
-  //         "182867259493-1n2dcoq4isd0reck2593t5mmkaq5vpmr.apps.googleusercontent.com",
-  //       //iosClientId: YOUR_CLIENT_ID_HERE,  <-- if you use iOS
-  //       scopes: ["profile", "email"]
-  //     })
 
-
-  //     if (result.type === "success") {
-  //       // let user ={
-  //       //   isAuthenticated:true,
-
-  //       //   accessToken:result.accessToken
-  //       // }
-  //       let newUser = {
-  //         signInType:'google',
-  //         isAdmin:true,
-  //         name: result.user.name,
-  //         email:result.user.email,
-  //         profileImage: result.user.photoUrl? result.user.photoUrl:"https://i.ibb.co/cytsxWb/default-Men-Dp.png",
-  //       }
-  //       //backend call
-  //       let res = await axios.post(`${baseUrl}/api/common/auth/login`,newUser);
-  //       if(res.data.success == true){
-  //         ToastAndroid.show('Login succesfull!', ToastAndroid.SHORT);
-  //         let user = {
-  //           token: res.data.token,
-  //           isAuthenticated:true,
-  //           signInType:'google',
-  //           accessToken:result.accessToken
-  //         }
-  //         axios.defaults.headers.common["Authorization"] = user.token;
-  //         AsyncStorage.setItem('USER', JSON.stringify(user));
-  //         this.props.navigation.navigate('AdminDashboard');
-  //       }
-  //       else {
-  //         ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-  //         this.handleClear();
-  //       }
-
-
-  //       // await AsyncStorage.setItem('USER_INFO', JSON.stringify(user));
-  //       // this.props.navigation.navigate('Profile')
-  //       // this.setState({
-  //       //   signedIn: true,
-  //       //   name: result.user.name,
-  //       //   photoUrl: result.user.photoUrl,
-  //       //   accessTokenObj: result.accessToken
-  //       // })
-  //     } else {
-  //       alert("cancelled")
-  //     }
-  //   } catch (e) {
-  //     alert("error"+ e)
-  //   }
-  // }
     render() {
       return (
         <Container>
         <StatusBar hidden />
+        {this.state.showLoading?<ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
         <View style={{flexDirection:'column'}}>
-          <Text style={styles.appTitle}>Admin Login Via</Text>
-          <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', paddingTop:15, marginBottom:35}}>
-              {/* <TouchableOpacity
-                    onPress={()=> this.handleGoogleLogin()}
-              >
-                    <Ionicons style={styles.adminButton} name='logo-google' size={30}/>
-              </TouchableOpacity> */}
-            </View>
-            <Text style={styles.smallTitle}>Be Traditional </Text>
+          <Text style={styles.appTitle}>Login</Text>
             <Form style={styles.formView}>
             <Item floatingLabel>
                      <Label>Email</Label>
@@ -194,12 +140,6 @@ handleBackButtonClick = () =>{
 
 
   const styles = StyleSheet.create({
-    // Container:{
-    //   flexGrow:1,
-    //   backgroundColor:'#FAFAFA',
-    //   justifyContent:'center',
-    //   alignItems:'center'
-    // },
     appTitle:{
       paddingTop:40,
       fontFamily:'Roboto',

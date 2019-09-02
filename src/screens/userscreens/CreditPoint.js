@@ -14,7 +14,7 @@ export default class CreditPoint extends Component {
     super(props);
     this.state={
       point:null,
-      isLoaded:false,
+      showLoading:0,
     }
   }
 
@@ -22,91 +22,58 @@ export default class CreditPoint extends Component {
     let user = await AsyncStorage.getItem('USER');
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
-    this.setState({  isLoaded:false})
     let res = await axios.get(`${baseUrl}/api/user/creditPoint/getCreditPointAndRupees`);
-    this.setState({ point: res.data, isLoaded:true})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ point: res.data, showLoading:1})
   }
 
   handleGetData = async() =>{
     let user = await AsyncStorage.getItem('USER');
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
-    this.setState({  isLoaded:false})
     let res = await axios.get(`${baseUrl}/api/user/creditPoint/getCreditPointAndRupees`);
-    this.setState({ point: res.data, isLoaded:true})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ point: res.data, showLoading:1})
   }
     render() {
       return (
         <View>
            <NavigationEvents onDidFocus={() => this.handleGetData()} />
-           {this.state.point && this.state.isLoaded?
+           {this.state.point || this.state.showLoading?
               (
+                this.state.point?
                 <View>
-                <Text style={{alignSelf:'center'}}>Joined On: {this.state.point.joiningDate}</Text>
-                <Text style={{alignSelf:'center'}}>Reward Point: {this.state.point.currentCreditPoint}</Text>
-                <Text style={{alignSelf:'center'}}>Converted Cash Amount: INR. {this.state.point.rupees}</Text>
-                <Text style={{alignSelf:'center'}}>Level: {this.state.point.label}</Text>
-                <TouchableOpacity
-                style={{height:45, margin:10}}
-                onPress={()=> alert('encashed')}
-                >
-                <Text>EnCash to Real Money</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                style={{height:45, margin:10}}
-                onPress={()=> this.props.navigation.navigate('CashHistory')}
-                >
-                <Text>Withdraw History</Text>
-                </TouchableOpacity>
-            </View>
+                  <Text style={{alignSelf:'center'}}>Joined On: {this.state.point.joiningDate}</Text>
+                  <Text style={{alignSelf:'center'}}>Reward Point: {this.state.point.currentCreditPoint}</Text>
+                  <Text style={{alignSelf:'center'}}>Converted Cash Amount: INR. {this.state.point.rupees}</Text>
+                  <Text style={{alignSelf:'center'}}>Level: {this.state.point.label}</Text>
+                  <TouchableOpacity
+                  style={{height:45, margin:10,
+                    backgroundColor:'orange', width:180, borderRadius:25,
+                  alignItems:'center', justifyContent:'center', alignSelf:'center'}}
+                  onPress={()=> alert('encashed')}
+                  >
+                  <Text style={{textAlign:'center'}}>EnCash to Real Money</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                  style={{height:45, margin:10,
+                    backgroundColor:'orange', width:180, borderRadius:25,
+                  alignItems:'center', justifyContent:'center', alignSelf:'center'}}
+                  onPress={()=> this.props.navigation.navigate('CashHistory')}
+                  >
+                  <Text style={{textAlign:'center'}}>Withdraw History</Text>
+                  </TouchableOpacity>
+                </View>
+                :<Text>No Data Available!</Text>
+
 
               ):<ActivityIndicator size="small" color="#00ff00" />
           }
         </View>
-
-        // <Container style={{backgroundColor:'#fff', justifyContent:'center', alignItems:'center',marginTop: 80}}>
-        //   <Content>
-        //     <Grid >
-
-        //     <Row size={10} >
-        //       {/* <Thumbnail style={{width:'100%', height:200}} source={require('../../assets/creditPoint.jpg')} /> */}
-        //     </Row>
-        //     <Row size={50}>
-        //       {this.state.point && this.state.isLoaded?
-        //       (
-        //         <Content>
-        //           <Text>hi</Text>
-        //         <Text style={{alignSelf:'center'}}>Joined On: {this.state.point.joiningDate}</Text>
-        //         <Text style={{alignSelf:'center'}}>Reward Point: {this.state.point.currentCreditPoint}</Text>
-        //         <Text style={{alignSelf:'center'}}>Converted Cash Amount: INR. {this.state.point.rupees}</Text>
-        //         <Text style={{alignSelf:'center'}}>Level: {this.state.point.label}</Text>
-        //       </Content>
-
-        //       ):<ActivityIndicator size="small" color="#00ff00" />
-
-
-        //       }
-
-        //     </Row>
-        //     <Row size={40}>
-        //       <Content>
-        //       <Button block
-        //         style={{height:45, margin:10}}
-        //         onPress={()=> alert('encashed')}
-        //         >
-        //         <Text>EnCash to Real Money</Text>
-        //         </Button>
-        //         <Button block success
-        //         style={{height:45, margin:10}}
-        //         onPress={()=> this.props.navigation.navigate('CashHistory')}
-        //         >
-        //         <Text>History payments</Text>
-        //       </Button>
-        //       </Content>
-        //     </Row>
-        //     </Grid>
-        //   </Content>
-        // </Container>
 
      )
     }

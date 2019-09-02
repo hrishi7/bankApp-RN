@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { StyleSheet, View ,StatusBar,TouchableOpacity,ToastAndroid,BackHandler } from 'react-native';
+import { StyleSheet, View ,StatusBar,TouchableOpacity,
+  ActivityIndicator,ToastAndroid,BackHandler } from 'react-native';
 import {Container,Content,H2,Header,Button, Text,H3, Form, Item,Icon, Input, Label,H4,Fab} from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,7 +23,8 @@ handleBackButtonClick = () =>{
       name:"",
       email:"",
       password:"",
-      mobile:""
+      mobile:"",
+      showLoading:0
     }
   }
   checkValidation = () =>{
@@ -35,6 +37,7 @@ handleBackButtonClick = () =>{
 }
   handleDefaultSignUp = () =>{
     if(this.checkValidation()){
+      this.setState({ showLoading: 1})
       let dt = new Date();
       let newAdmin = {
         name:this.state.name,
@@ -48,6 +51,10 @@ handleBackButtonClick = () =>{
       //navigate to login screen
       axios.post(`${baseUrl}/api/common/auth/signUp`,newAdmin)
       .then(res =>{
+        if(res.status !== 200){
+          ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+        }
+        this.setState({ showLoading:0});
         ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
         if(res.data.msg == 'signUp successfull!'){
           this.handleClear();
@@ -70,16 +77,9 @@ handleBackButtonClick = () =>{
     return (
       <Container style={styles.container}>
       <StatusBar hidden />
+      {this.state.showLoading?<ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
       <View style={{flexDirection:'column'}}>
-        <Text style={styles.appTitle}>Admin Register </Text>
-          {/* <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center', paddingTop:15, marginBottom:35}}>
-            <TouchableOpacity
-                  onPress={()=> this.handleGoogleSignUp()}
-            >
-                  <Ionicons style={styles.adminButton} name='logo-google' size={30}/>
-            </TouchableOpacity>
-          </View> */}
-          <Text style={styles.smallTitle}>Be Traditional </Text>
+        <Text style={styles.appTitle}>Register </Text>
         <Form style={styles.formView}>
                 <Item floatingLabel>
                    <Label>Name</Label>

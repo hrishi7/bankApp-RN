@@ -23,7 +23,7 @@ handleBackButtonClick = () =>{
         <View style={{justifyContent:'center', alignItems:'center'}}>
           <Text
           style={{
-            textAlign:'center', fontSize:30,
+            textAlign:'center', fontSize:25,justifyContent:'center',
             color:'#ff5722',fontWeight:'bold'
           }}
           >Welcome To Syndicate bank</Text>

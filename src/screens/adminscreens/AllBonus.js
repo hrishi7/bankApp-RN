@@ -16,15 +16,21 @@ export default class AllBonus extends Component {
     super(props);
     this.state={
       firstQuery: '',
-      allBonus:[]
+      allBonus:[],
+      showLoading: 0
     }
   }
   componentDidMount = async() =>{
+
     let user = await AsyncStorage.getItem('USER');
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
 
     let res = await axios.get(`${baseUrl}/api/admin/bonus/getAll`);
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ showLoading:1});
     this.setState({ allBonus: res.data})
   }
 
@@ -33,6 +39,10 @@ export default class AllBonus extends Component {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.get(`${baseUrl}/api/admin/bonus/getAll/${searchText}`);
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ showLoading:1});
     this.setState({ allBonus: res.data})
   }
   onPressBonus = (item)=>{
@@ -67,19 +77,19 @@ export default class AllBonus extends Component {
               <Row size={80} >
                 <List style={{width:'100%'}}>
                 {
+                  this.state.allBonus.length > 0 || this.state.showLoading ?
                   this.state.allBonus.length > 0 ?
-
-              (
-                <FlatList
-                style={{marginTop:5, marginBottom:10,}}
-                vertical
-                showsVerticalScrollIndicator={false}
-                numColumns={1}
-                data={this.state.allBonus}
-                renderItem={this.renderBonus}
-                keyExtractor={item => `${item._id}`}
-                />
-              ):
+                    <FlatList
+                    style={{marginTop:5, marginBottom:10,}}
+                    vertical
+                    showsVerticalScrollIndicator={false}
+                    numColumns={1}
+                    data={this.state.allBonus}
+                    renderItem={this.renderBonus}
+                    keyExtractor={item => `${item._id}`}
+                    />
+                  :<Text>No Data Available!</Text>
+              :
                 <ActivityIndicator size="small" color="#00ff00" />
               }
                 </List>

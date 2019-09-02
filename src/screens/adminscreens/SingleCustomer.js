@@ -11,41 +11,60 @@ export default class SingleCustomer extends Component {
   constructor(props){
     super(props);
     this.state ={
-      customer:null
+      customer:null,
+      showLoading:0
     }
   }
   componentDidMount(){
     const { navigation } = this.props;
     const data = navigation.getParam('item', 'NO-data');
     if(data !== null){
+      this.setState({showLoading: 1});
       this.setState({ customer: data});
+      this.setState({showLoading: 0});
+
     }
   }
   updateStatus = async(status) =>{
     if(status == 'PENDING_FOR_CIBIL_SCORE'){
+      this.setState({showLoading: 1});
       let user = await AsyncStorage.getItem('USER');
       user = JSON.parse(user);
       axios.defaults.headers.common["Authorization"] = user.token;
 
       let res = await axios.post(`${baseUrl}/api/admin/customer/pendingForCibilScore/${this.state.customer._id}`);
+      if(res.status !== 200){
+        ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+      }
+      this.setState({ showLoading:0});
       ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
       this.handleGetData();
     }
     else if(status == 'CIBIL_SCORE_COMPLETE'){
+      this.setState({ showLoading:1});
       let user = await AsyncStorage.getItem('USER');
       user = JSON.parse(user);
       axios.defaults.headers.common["Authorization"] = user.token;
 
       let res = await axios.post(`${baseUrl}/api/admin/customer/completeCibileScore/${this.state.customer._id}`);
+      if(res.status !== 200){
+        ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+      }
+      this.setState({ showLoading:0});
       ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
       this.handleGetData();
     }
     else if(status == 'LOAN_APPROVED'){
+      this.setState({ showLoading:1});
       let user = await AsyncStorage.getItem('USER');
       user = JSON.parse(user);
       axios.defaults.headers.common["Authorization"] = user.token;
 
       let res = await axios.post(`${baseUrl}/api/admin/customer/loanApprovedComplete/${this.state.customer._id}`);
+      if(res.status !== 200){
+        ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+      }
+      this.setState({ showLoading:0});
       ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
       this.handleGetData();
     }
@@ -54,16 +73,22 @@ export default class SingleCustomer extends Component {
     }
   }
   handleGetData = async() =>{
+    this.setState({ showLoading:1});
     let user = await AsyncStorage.getItem('USER');
       user = JSON.parse(user);
       axios.defaults.headers.common["Authorization"] = user.token;
 
       let res = await axios.get(`${baseUrl}/api/common/customerRead/getOne/${this.state.customer._id}`);
+      if(res.status !== 200){
+        ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+      }
+      this.setState({ showLoading:0});
       this.setState({ customer: res.data});
   }
   render() {
     return (
       <View>
+        {this.state.showLoading?<ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
         <Text style={{textAlign:'center',
         fontSize:25, color:'#9e9d24',
         fontWeight:'900'}}>Customer</Text>

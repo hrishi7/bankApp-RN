@@ -17,7 +17,8 @@ export default class CompletedCustomers extends Component {
     super(props);
     this.state={
       firstQuery: '',
-      customers:[]
+      customers:[],
+      showLoading:0
     }
   }
 
@@ -27,7 +28,10 @@ export default class CompletedCustomers extends Component {
     axios.defaults.headers.common["Authorization"] = user.token;
 
     let res = await axios.get(`${baseUrl}/api/user/customer/getCompletedCustomers`);
-    this.setState({ customers: res.data})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ customers: res.data, showLoading:1})
   }
 
   handleGetData = async(searchText) =>{
@@ -35,7 +39,10 @@ export default class CompletedCustomers extends Component {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.get(`${baseUrl}/api/user/customer/getCompletedCustomers/${searchText}`);
-    this.setState({ customers: res.data})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ customers: res.data, showLoading:1})
   }
 
   render() {
@@ -58,23 +65,25 @@ export default class CompletedCustomers extends Component {
               <Row size={80} >
                 <List style={{width:'100%'}}>
                 {
-                  this.state.customers.length > 0 ?
+                  this.state.customers.length > 0 || this.state.showLoading?
 
               (
+                this.state.customers.length > 0 ?
                 this.state.customers.map((each, index)=>(
+                  <ListItem icon
+                  key={index}
+                    onPress={()=>this.props.navigation.navigate('Customer',{'data':each})}
+                    >
+                      <Body>
+                        <Text>{each.name}</Text>
+                      </Body>
+                      <Right>
+                        <Ionicons name="ios-arrow-forward" size={30} />
+                      </Right>
+                  </ListItem>
+      ))
+                :<Text>No Data Available!</Text>
 
-                            <ListItem icon
-                            key={index}
-                              onPress={()=>this.props.navigation.navigate('Customer',{'data':each})}
-                              >
-                                <Body>
-                                  <Text>{each.name}</Text>
-                                </Body>
-                                <Right>
-                                  <Ionicons name="ios-arrow-forward" size={30} />
-                                </Right>
-                            </ListItem>
-                ))
               ):
                 <ActivityIndicator size="small" color="#00ff00" />
               }

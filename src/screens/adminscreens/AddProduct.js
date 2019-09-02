@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View ,ScrollView,AsyncStorage,ToastAndroid} from 'react-native';
+import { StyleSheet, Text, View ,ScrollView,AsyncStorage,
+  ActivityIndicator,
+  ToastAndroid} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import {Container,
@@ -33,6 +35,7 @@ export default class AddProduct extends Component {
             specialSchemes:"",
             DocumentRequired:"",
             productCreditPoint:"",
+            showLoading:0,
         }
     }
     componentDidMount = async () =>{
@@ -60,6 +63,7 @@ export default class AddProduct extends Component {
     }
     handleSaveProduct = async() => {
         if(this.checkValidation()){
+          this.setState({ showLoading:1})
             let newProduct = {
               productDescription:{
                 keyFeatures:[],
@@ -111,8 +115,13 @@ export default class AddProduct extends Component {
             axios.defaults.headers.common["Authorization"] = user.token;
 
             let res = await axios.post(`${baseUrl}/api/admin/product/regProduct/${this.state.id}`,newProduct);
+            if(res.status !== 200){
+              ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+            }
+            this.setState({ showLoading:0});
             ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-            // this.handleClear();
+            this.handleClear();
+
             if(res.data.msg == 'Product Created successfully' || res.data.msg == 'Product Updated Successfully'){
               this.props.navigation.navigate('AllProduct');
             }
@@ -143,7 +152,7 @@ export default class AddProduct extends Component {
     }
     fillStateData = (data) =>{
       if(data !== undefined){
-        console.log(data);
+        this.setState({showLoading:1})
         this.setState({
             id:data._id,
             productTitle:data.productTitle,
@@ -158,15 +167,21 @@ export default class AddProduct extends Component {
             DocumentRequired:data.productDescription.DocumentRequired?data.productDescription.DocumentRequired.join(","):"",
             productCreditPoint:data.productCreditPoint+"",
         })
+        this.setState({showLoading:0})
       }
     }
     handleDelete = async()=>{
+      this.setState({ showLoading:1})
         let user = await AsyncStorage.getItem('USER');
         user = JSON.parse(user);
         axios.defaults.headers.common["Authorization"] = user.token;
         let res = await axios.delete(`${baseUrl}/api/admin/product/delete/${this.state.id}`);
+        if(res.status !== 200){
+          ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+        }
+        this.setState({ showLoading:0})
         ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
-        // this.handleClear();
+        this.handleClear();
         if(res.data.msg == 'Product Deleted successfully'){
           this.props.navigation.navigate('AllProduct');
         }
@@ -180,6 +195,8 @@ export default class AddProduct extends Component {
         extraScrollHeight={90}
         >
             <Container style={{height: '100%'}}>
+            {this.state.showLoading?<ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
+              :<Text></Text>}
             <NavigationEvents onDidFocus={() => this.handleFillData()} />
                 <Grid>
                 <Row size={5} style={{backgroundColor:'#fff', justifyContent:'center', alignItems:'center',marginBottom: 0}}>

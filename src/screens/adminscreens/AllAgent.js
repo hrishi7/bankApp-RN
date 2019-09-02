@@ -17,7 +17,8 @@ export default class AllAgent extends Component {
     super(props);
     this.state={
       firstQuery: '',
-      agents:[]
+      agents:[],
+      showLoading:0
     }
   }
   componentDidMount = async() =>{
@@ -26,6 +27,10 @@ export default class AllAgent extends Component {
     axios.defaults.headers.common["Authorization"] = user.token;
 
     let res = await axios.get(`${baseUrl}/api/admin/creditPoint`);
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ showLoading:1});
     this.setState({ agents: res.data})
   }
 
@@ -34,16 +39,18 @@ export default class AllAgent extends Component {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.get(`${baseUrl}/api/admin/creditPoint/${searchText}`);
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ showLoading:1});
     this.setState({ agents: res.data})
   }
   renderAgents = ({ item }) => (
-    // <TouchableHighlight underlayColor='rgba(73,182,77,1,0.9)'>
     <View style={{alignItems:'center', borderBottomWidth:1, borderBottomColor:'orange', marginVertical:4}}>
     <Text style={{textAlign:'center'}}>{item.agentName}</Text>
     <Text style={{textAlign:'center'}}>{item.agentLabel}</Text>
     <Text style={{textAlign:'center'}}>{item.agentCreditPoint}</Text>
     </View>
-    // </TouchableHighlight>
     );
     render() {
       return (
@@ -59,22 +66,23 @@ export default class AllAgent extends Component {
         style={{width:'100%'}}
         placeholder="Type Agent name.."
         onChangeText={query => { this.handleGetData(query)}}
-        // value={this.state.firstQuery}
         />
         </Row>
         <Row size={80} >
         <List style={{width:'100%'}}>
         {
+          this.state.agents.length > 0 || this.state.showLoading ?
           this.state.agents.length > 0 ?
-          <FlatList
-          style={{marginTop:5, marginBottom:10,}}
-          vertical
-          showsVerticalScrollIndicator={false}
-          numColumns={1}
-          data={this.state.agents}
-          renderItem={this.renderAgents}
-          keyExtractor={item => `${item._id}`}
-          />
+            <FlatList
+            style={{marginTop:5, marginBottom:10,}}
+            vertical
+            showsVerticalScrollIndicator={false}
+            numColumns={1}
+            data={this.state.agents}
+            renderItem={this.renderAgents}
+            keyExtractor={item => `${item._id}`}
+            />
+          : <Text>No Data Available!</Text>
           :
           <ActivityIndicator size="small" color="#00ff00" />
         }

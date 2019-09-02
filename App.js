@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 //import common screens from src
 import SplashScreen from './src/screens/common/SplashScreen'
 import Welcome from './src/screens/common/Welcome'
+import Errorpage from './src/screens/common/Errorpage'
 
 //user screens
 
@@ -484,6 +485,14 @@ const AppStackNavigator = createStackNavigator({
       return{
         headerLeft:null,
         headerTitle:'Agent',
+      }
+    }
+  },
+  Errorpage: { screen: Errorpage,
+    navigationOptions:({navigation})=>{
+      return{
+        headerLeft:null,
+        headerTitle:'Error',
       }
     }
   },

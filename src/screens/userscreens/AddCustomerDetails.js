@@ -28,7 +28,8 @@ export default class AddCustomerDetails extends Component {
             idProofNumber:"",
             loanTitle:"",
             loanAmount:"",
-            products:[]
+            products:[],
+            showLoading:0
         }
     }
 
@@ -46,6 +47,7 @@ export default class AddCustomerDetails extends Component {
     handleSaveCustomer = async() => {
 
         if(this.checkValidation()){
+            this.setState({ showLoading:1})
             let newCustomer = {
             };
             let dt = new Date();
@@ -63,6 +65,10 @@ export default class AddCustomerDetails extends Component {
             user = JSON.parse(user);
             axios.defaults.headers.common["Authorization"] = user.token;
             let res = await axios.post(`${baseUrl}/api/user/customer/customerRegister`,newCustomer);
+            if(res.status !== 200){
+                ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+              }
+            this.setState({ showLoading:0})
             ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
             this.handleClear();
             this.props.navigation.navigate('PendingCustomers');
@@ -99,6 +105,7 @@ export default class AddCustomerDetails extends Component {
         extraScrollHeight={90}
         >
             <Container style={{height: '100%'}}>
+            {this.state.showLoading?<ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
                 <Grid>
                 <Row size={5} style={{backgroundColor:'#fff', justifyContent:'center', alignItems:'center',marginBottom: 0}}>
                     <Text style={{alignSelf:'center'}}>Add a new Customer</Text>

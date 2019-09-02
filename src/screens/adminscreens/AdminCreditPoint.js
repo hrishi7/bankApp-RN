@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View ,ScrollView,AsyncStorage,ToastAndroid} from 'react-native';
+import { StyleSheet, Text, View ,ScrollView,
+  ActivityIndicator
+  ,AsyncStorage,ToastAndroid} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import {Container,
   Content,
@@ -16,6 +18,7 @@ import {Container,
   import { baseUrl} from '../../../scretKey';
 
   import axios from 'axios';
+import ThreeAxisSensor from 'expo-sensors/build/ThreeAxisSensor';
 
 
   export default class AdminCreditPoint extends Component {
@@ -23,7 +26,8 @@ import {Container,
       super(props);
       this.state ={
         id:"",
-        indianRupees:""
+        indianRupees:"",
+        showLoading:0
       }
     }
     componentDidMount = async () =>{
@@ -37,11 +41,16 @@ import {Container,
 
     }
     handleGetData = async () =>{
+      this.setState({showLoading:1})
       let user = await AsyncStorage.getItem('USER');
         user = JSON.parse(user);
         axios.defaults.headers.common["Authorization"] = user.token;
 
         let res = await axios.get(`${baseUrl}/api/admin/creditPoint/getvalue/getcreditPointValue`);
+        if(res.status !== 200){
+          ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+        }
+
         this.fillStateData(res.data);
     }
 
@@ -54,6 +63,7 @@ import {Container,
 
     handleSave = async() => {
       if(this.checkValidation()){
+        this.setState({ showLoading:1})
         let newCredit = {};
 
         newCredit.indianRupees = this.state.indianRupees;
@@ -64,6 +74,10 @@ import {Container,
         axios.defaults.headers.common["Authorization"] = user.token;
 
         let res = await axios.post(`${baseUrl}/api/admin/creditPoint/add`,newCredit);
+        if(res.status !== 200){
+          ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+        }
+        this.setState({ showLoading:0})
         ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
         this.handleClear();
       }else{
@@ -72,6 +86,7 @@ import {Container,
     }
 
     handleUpdate = async () =>{
+      this.setState({ showLoading:1})
       let newCredit = {};
 
       newCredit.indianRupees = this.state.indianRupees;
@@ -81,6 +96,10 @@ import {Container,
       axios.defaults.headers.common["Authorization"] = user.token;
 
       let res = await axios.post(`${baseUrl}/api/admin/creditPoint/updatecreditPointValue/${this.state.id}`,newCredit);
+      if(res.status !== 200){
+        ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+      }
+      ThreeAxisSensor.setState({showLoading:0});
       ToastAndroid.show(res.data.msg, ToastAndroid.SHORT);
       this.handleGetData();
     }
@@ -100,7 +119,8 @@ import {Container,
       if(data.length > 0){
         this.setState({
           id:data[0]._id,
-          indianRupees:data[0].indianRupees
+          indianRupees:data[0].indianRupees,
+          showLoading:1
         })
       }
     }
@@ -108,6 +128,7 @@ import {Container,
     render() {
       return (
         <View>
+          {this.state.showLoading?<ActivityIndicator size="small" color="#00ff00" />:<Text></Text>}
         <Text>Bonus</Text>
         <KeyboardAwareScrollView
         enableOnAndroid={true}

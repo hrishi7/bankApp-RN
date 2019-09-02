@@ -8,7 +8,7 @@ import {Ionicons} from '@expo/vector-icons'
 import { NavigationEvents } from "react-navigation";
 
 
-import {androidClientId, baseUrl} from '../../../scretKey';
+import {baseUrl} from '../../../scretKey';
 import axios from 'axios';
 
 
@@ -17,7 +17,8 @@ export default class PendingCustomers extends Component {
     super(props);
     this.state={
       firstQuery: '',
-      customers:[]
+      customers:[],
+      showLoading:0
     }
   }
   componentDidMount = async() =>{
@@ -26,14 +27,21 @@ export default class PendingCustomers extends Component {
     axios.defaults.headers.common["Authorization"] = user.token;
 
     let res = await axios.get(`${baseUrl}/api/user/customer/getPendingCustomers`);
-    this.setState({ customers: res.data})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ customers: res.data, showLoading:1})
   }
+
   handleGetData = async(searchText) =>{
     let user = await AsyncStorage.getItem('USER');
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.get(`${baseUrl}/api/user/customer/getPendingCustomers/${searchText}`);
-    this.setState({ customers: res.data})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ customers: res.data, showLoading:1})
   }
 
   render() {
@@ -50,29 +58,29 @@ export default class PendingCustomers extends Component {
                 style={{width:'100%'}}
                   placeholder="Search by Id or Name"
                   onChangeText={query => { this.handleGetData(query)}}
-                  // value={this.state.firstQuery}
                 />
               </Row>
               <Row size={80} >
                 <List style={{width:'100%'}}>
                 {
-                  this.state.customers.length > 0 ?
+                  this.state.customers.length > 0  || this.state.showLoading ?
 
               (
+                this.state.customers.length > 0?
                 this.state.customers.map((each, index)=>(
-
-                            <ListItem icon
-                            key={index}
-                              onPress={()=>this.props.navigation.navigate('Customer',{'data':each})}
-                              >
-                                <Body>
-                                  <Text>{each.name}</Text>
-                                </Body>
-                                <Right>
-                                  <Ionicons name="ios-arrow-forward" size={30} />
-                                </Right>
-                            </ListItem>
+                  <ListItem icon
+                  key={index}
+                    onPress={()=>this.props.navigation.navigate('Customer',{'data':each})}
+                    >
+                      <Body>
+                        <Text>{each.name}</Text>
+                      </Body>
+                      <Right>
+                        <Ionicons name="ios-arrow-forward" size={30} />
+                      </Right>
+                  </ListItem>
                 ))
+                : <Text>No Data Available!</Text>
               ):
                 <ActivityIndicator size="small" color="#00ff00" />
               }

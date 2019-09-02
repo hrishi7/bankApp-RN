@@ -16,7 +16,7 @@ export default class Notification extends Component {
     this.state={
       firstQuery: '',
       notifications:[],
-      isLoaded:false
+      showLoading:0
     }
   }
   componentDidMount = async() =>{
@@ -24,7 +24,10 @@ export default class Notification extends Component {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.get(`${baseUrl}/api/common/notification/getNotification`);
-    this.setState({ notifications: res.data,isLoaded:true})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ notifications: res.data,showLoading:1})
   }
 
   handleGetData = async() =>{
@@ -32,7 +35,10 @@ export default class Notification extends Component {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.get(`${baseUrl}/api/common/notification/getNotification`);
-    this.setState({ notifications: res.data, isLoaded: true})
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({ notifications: res.data,showLoading:1})
   }
 
   updateNotificationStatus = async (id) =>{
@@ -40,6 +46,10 @@ export default class Notification extends Component {
     user = JSON.parse(user);
     axios.defaults.headers.common["Authorization"] = user.token;
     let res = await axios.post(`${baseUrl}/api/common/notification/updateNotificationStatus/${id}`);
+    if(res.status !== 200){
+      ToastAndroid.show('Server Error! Try after Sometime', ToastAndroid.SHORT);
+    }
+    this.setState({showLoading:1})
     ToastAndroid.show(res.data, ToastAndroid.SHORT);
     this.handleGetData();
   }
@@ -56,7 +66,8 @@ export default class Notification extends Component {
               <Row size={80} >
                 <List style={{width:'100%'}}>
                   {
-                    this.state.notifications.length > 0 && this.state.isLoaded?(
+                    this.state.notifications.length > 0 || this.state.showLoading ?(
+                      this.state.notifications.length > 0?
                       this.state.notifications.map(each=>(
                         <ListItem icon
                         key={each._id}
@@ -70,6 +81,7 @@ export default class Notification extends Component {
                           </Right>
                       </ListItem>
                       ))
+                      :<Text>No Data Available!</Text>
                     ):
                     <ActivityIndicator size="small" color="#00ff00" />
                   }
@@ -79,9 +91,6 @@ export default class Notification extends Component {
           </Content>
         </Container>
       </KeyboardAwareScrollView>
-      // <View>
-      //   <Button onPress={()=> this.props.navigation.navigate('singleCustomer')}/>
-      // </View>
     )
   }
 }
